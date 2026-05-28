@@ -1013,6 +1013,7 @@ footer a:hover {
 }
 .editor-active-overlay .sig-delete-btn,
 .editor-active-overlay .sig-copy-btn,
+.editor-active-overlay .sig-drag-handle,
 .editor-active-overlay .font-size-widget,
 .editor-active-overlay .sig-resize-handle {
   display: none !important;
@@ -1026,7 +1027,8 @@ footer a:hover {
   padding: 4px 8px !important;
 }
 .editor-active-overlay.editing .sig-delete-btn,
-.editor-active-overlay.editing .sig-copy-btn {
+.editor-active-overlay.editing .sig-copy-btn,
+.editor-active-overlay.editing .sig-drag-handle {
   display: flex !important;
 }
 .editor-active-overlay.editing .font-size-widget {

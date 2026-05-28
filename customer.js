@@ -86,12 +86,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         try {
           decryptedPdfBytes = reader.result;
           
-          loadingStatus.textContent = "Menyediakan ruang tandatangan...";
-          await initPdfWorkspace();
-          
           loadingPanel.style.display = "none";
           workspacePanel.style.display = "block";
           document.body.classList.add("customer-active");
+          
+          loadingStatus.textContent = "Menyediakan ruang tandatangan...";
+          await initPdfWorkspace();
           
           // Auto-trigger customer signature canvas modal immediately
           openSignatureModal();
@@ -129,13 +129,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       decryptedPdfBytes = base64ToArrayBuffer(base64);
       
-      // Initialize PDF.js and PDF-Lib workspace
-      loadingStatus.textContent = "Menyediakan ruang tandatangan...";
-      await initPdfWorkspace();
-
       loadingPanel.style.display = "none";
       workspacePanel.style.display = "block";
       document.body.classList.add("customer-active");
+
+      // Initialize PDF.js and PDF-Lib workspace
+      loadingStatus.textContent = "Menyediakan ruang tandatangan...";
+      await initPdfWorkspace();
       
       // Auto-trigger customer signature canvas modal immediately
       openSignatureModal();
@@ -145,13 +145,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       const rawPdfData = await downloadCloudPackage(fileUrl);
       decryptedPdfBytes = rawPdfData;
       
-      // Initialize PDF.js and PDF-Lib workspace
-      loadingStatus.textContent = "Menyediakan ruang tandatangan...";
-      await initPdfWorkspace();
-
       loadingPanel.style.display = "none";
       workspacePanel.style.display = "block";
       document.body.classList.add("customer-active");
+
+      // Initialize PDF.js and PDF-Lib workspace
+      loadingStatus.textContent = "Menyediakan ruang tandatangan...";
+      await initPdfWorkspace();
       
       // Auto-trigger customer signature canvas modal immediately
       openSignatureModal();
