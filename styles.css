@@ -955,6 +955,39 @@ footer a:hover {
   line-height: 1;
 }
 
+/* Active Toolbox Buttons in Desktop */
+.toolbox-btn.active {
+  background: var(--primary) !important;
+  color: white !important;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 10px var(--primary-glow) !important;
+}
+.toolbox-btn.active i {
+  color: white !important;
+}
+
+/* Canvas floating banner/badge for Active Tool Placement Mode */
+.canvas-notification {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(220, 38, 38, 0.95);
+  color: white;
+  padding: 6px 16px;
+  border-radius: 99px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  z-index: 150;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: var(--shadow-md), 0 0 15px var(--primary-glow);
+  animation: fadeInDown 0.3s ease;
+  pointer-events: none; /* Let clicks/taps pass through to canvas! */
+}
+
+
 /* 
   =========================================
   Focus-Editing Mode Styles (WOW Feature) 
@@ -1065,6 +1098,24 @@ footer a:hover {
   sleek thin card borders, spacious document views, and finger-friendly controls.
 */
 @media (max-width: 1024px) {
+  /* Guarantee mobile scrolling on welcome screens by default */
+  html, body {
+    overflow-y: auto !important;
+    height: auto !important;
+  }
+
+  /* Prevent squished cards on mobile welcome/upload screen */
+  .glass-panel {
+    padding: 1.25rem !important;
+    border-radius: var(--radius-md) !important;
+    margin: 0 !important;
+    margin-bottom: 1rem !important;
+  }
+  
+  .app-container {
+    padding: 1rem 0.75rem !important;
+  }
+
   /* Make the app take full viewport height and width only when editor or customer portal is active */
   body.editor-active, body.customer-active {
     overflow: hidden !important;
@@ -1085,11 +1136,16 @@ footer a:hover {
     display: none !important; /* Hide brand header only when active */
   }
 
+  body.editor-active footer, body.customer-active footer {
+    display: none !important; /* Hide footer only when active */
+  }
+
   body.editor-active .glass-panel, body.customer-active .glass-panel {
     border-radius: 0 !important;
     border: none !important;
     box-shadow: none !important;
     padding: 0 !important;
+    margin: 0 !important;
     height: 100vh !important;
     display: flex;
     flex-direction: column;
@@ -1135,79 +1191,102 @@ footer a:hover {
     display: none !important; /* Hide file name on top bar to save space */
   }
 
-  /* Fixed Bottom Bar Toolbar */
+  /* Fixed Bottom Bar Toolbar - TWO ROWS for maximum legibility */
   body.editor-active .editor-toolbox {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    height: 65px;
+    height: 95px !important; /* Fits two rows beautifully */
     background: #ffffff !important;
     border-top: 1px solid #e2e8f0 !important;
     border: none !important;
     margin: 0 !important;
     border-radius: 0 !important;
-    padding: 0.25rem 0.5rem !important;
+    padding: 0.4rem 0.5rem !important;
     display: flex !important;
+    flex-wrap: wrap !important;
     justify-content: space-around !important;
     align-items: center !important;
     z-index: 200;
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.04) !important;
+    box-shadow: 0 -3px 15px rgba(0,0,0,0.05) !important;
+    gap: 4px !important;
   }
 
   body.editor-active .editor-toolbox div {
     display: none !important; /* Hide divider line in mobile toolbox */
   }
 
+  /* Row 1: The major action buttons styled as secondary gray by default, Cuckoo Red when active */
   body.editor-active .toolbox-btn {
-    font-size: 0.75rem !important;
-    padding: 0.4rem 0.5rem !important;
-    flex-direction: column !important;
-    gap: 2px !important;
-    background: transparent !important;
-    border: none !important;
-    color: var(--text-secondary) !important;
-    width: auto !important;
-    flex-grow: 1 !important;
+    flex: 1 1 45% !important;
+    height: 38px !important;
+    background: #f1f5f9 !important; /* Secondary gray background */
+    color: var(--text-primary) !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 6px !important;
+    font-size: 0.8rem !important;
+    font-weight: bold !important;
+    display: inline-flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
     box-shadow: none !important;
   }
 
   body.editor-active .toolbox-btn i {
-    font-size: 1.2rem !important;
+    font-size: 0.95rem !important;
+    color: var(--text-secondary) !important;
   }
 
-  /* Compact controls inside editor-toolbox for mobile */
-  body.editor-active .editor-toolbox button:not(.toolbox-btn) {
-    background: transparent !important;
+  body.editor-active .toolbox-btn.active {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%) !important;
+    color: white !important;
     border: none !important;
-    color: var(--text-secondary) !important;
-    padding: 0.3rem !important;
-    font-size: 0.95rem !important;
-    width: 32px !important;
-    height: 32px !important;
+    box-shadow: 0 2px 6px rgba(220,38,38,0.2) !important;
+  }
+
+  body.editor-active .toolbox-btn.active i {
+    color: white !important;
+  }
+
+
+  /* Row 2: Compact gray utility controls (Zoom & Pagination) */
+  body.editor-active .editor-toolbox button:not(.toolbox-btn) {
+    background: #f1f5f9 !important;
+    border: 1px solid #e2e8f0 !important;
+    color: var(--text-primary) !important;
+    padding: 0 !important;
+    font-size: 0.8rem !important;
+    width: 28px !important;
+    height: 28px !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
     box-shadow: none !important;
+    border-radius: 4px !important;
   }
 
   body.editor-active .editor-toolbox button:not(.toolbox-btn):hover {
     color: var(--primary) !important;
+    background: #fee2e2 !important;
   }
 
   body.editor-active .editor-toolbox .pdf-page-indicator {
-    font-size: 0.75rem !important;
+    font-size: 0.72rem !important;
     min-width: unset !important;
     text-align: center !important;
-    color: var(--text-muted) !important;
+    color: var(--text-secondary) !important;
     font-weight: bold !important;
+    padding: 0 2px !important;
   }
 
   /* Viewport fill middle */
   body.editor-active .pdf-viewer-container {
     position: absolute;
     top: 55px;
-    bottom: 65px;
+    bottom: 95px; /* Leave space for the 95px bottom bar */
     left: 0;
     right: 0;
     margin: 0 !important;
@@ -1243,20 +1322,20 @@ footer a:hover {
     background: #10b981 !important;
     color: white !important;
     border: none !important;
-    font-size: 0.8rem !important;
-    padding: 0.4rem 0.75rem !important;
+    font-size: 0.78rem !important;
+    padding: 0.4rem 0.65rem !important;
     border-radius: 6px !important;
     width: auto !important;
     box-shadow: 0 2px 5px rgba(16,185,129,0.2) !important;
   }
 
   body.editor-active #editor-section > div:last-of-type #editor-download-pdf-btn i {
-    font-size: 0.85rem !important;
+    font-size: 0.8rem !important;
   }
 
   body.editor-active #editor-section > div:last-of-type #generate-filled-pdf-btn {
-    font-size: 0.8rem !important;
-    padding: 0.4rem 0.75rem !important;
+    font-size: 0.78rem !important;
+    padding: 0.4rem 0.65rem !important;
     border-radius: 6px !important;
     width: auto !important;
     background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%) !important;
@@ -1302,7 +1381,7 @@ footer a:hover {
   body.customer-active #workspace-panel .pdf-viewer-container {
     position: absolute;
     top: 50px;
-    bottom: 125px; /* Leave space for bottom buttons */
+    bottom: 115px; /* Leave space for bottom buttons */
     left: 0;
     right: 0;
     margin: 0 !important;
@@ -1332,9 +1411,24 @@ footer a:hover {
     border-radius: 0 !important;
     padding: 0.25rem 0.5rem !important;
     display: flex !important;
-    justify-content: space-between !important;
+    justify-content: space-around !important;
     align-items: center !important;
     z-index: 200;
+  }
+
+  body.customer-active .tap-to-sign-prompt {
+    font-size: 0.72rem !important;
+    padding: 0.4rem 0.8rem !important;
+    white-space: nowrap !important;
+  }
+
+  body.customer-active .pdf-controls button {
+    padding: 0.35rem 0.45rem !important;
+    font-size: 0.75rem !important;
+  }
+
+  body.customer-active .pdf-page-indicator {
+    font-size: 0.75rem !important;
   }
 
   /* Bottom confirm action button */

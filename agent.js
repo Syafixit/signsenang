@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let pdfjsDocInstance = null;
   let currentPageIndex = 0;
   let zoomLevel = 1.0; // Dynamic zoom factor
+  let activeTool = null; // Track currently selected active tool (text or tick)
   
   // Annotation Storing Array
   let annotations = []; // { id, type, pageIndex, xPercent, yPercent, wPercent, hPercent, fontSize, value }
@@ -147,11 +148,78 @@ document.addEventListener("DOMContentLoaded", () => {
     editorZoomInBtn.onclick = () => adjustZoom(0.2);
     editorZoomOutBtn.onclick = () => adjustZoom(-0.2);
 
-    // Add Text click
-    addTextBtn.onclick = () => createTextAnnotation();
+    // Active tool helper
+    function setActiveTool(tool) {
+      if (activeTool === tool) {
+        // Toggle off
+        activeTool = null;
+      } else {
+        activeTool = tool;
+      }
 
-    // Add Tick click
-    addTickBtn.onclick = () => createTickAnnotation();
+      // Update button classes
+      if (activeTool === "text") {
+        addTextBtn.classList.add("active");
+        addTickBtn.classList.remove("active");
+        showCanvasNotification("Mod Teks Aktif: Ketik pada PDF untuk letak Teks");
+      } else if (activeTool === "tick") {
+        addTickBtn.classList.add("active");
+        addTextBtn.classList.remove("active");
+        showCanvasNotification("Mod Tick Aktif: Ketik pada PDF untuk letak Tick");
+      } else {
+        addTextBtn.classList.remove("active");
+        addTickBtn.classList.remove("active");
+        hideCanvasNotification();
+      }
+    }
+
+    // Add Text click - Toggles Text placement mode
+    addTextBtn.onclick = (e) => {
+      e.stopPropagation();
+      setActiveTool("text");
+    };
+
+    // Add Tick click - Toggles Tick placement mode
+    addTickBtn.onclick = (e) => {
+      e.stopPropagation();
+      setActiveTool("tick");
+    };
+
+    // PDF Canvas Click Listener for Tap-to-Place coordinates
+    editorPdfCanvas.addEventListener("click", (e) => {
+      if (!activeTool) return;
+      e.stopPropagation();
+
+      const rect = editorPdfCanvas.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clickY = e.clientY - rect.top;
+
+      if (activeTool === "text") {
+        createTextAnnotation(clickX, clickY);
+      } else if (activeTool === "tick") {
+        createTickAnnotation(clickX, clickY);
+      }
+
+      // Automatically reset tool after placing to allow instant editing of the placed node
+      setActiveTool(null);
+    });
+
+    // Floating notifications over the canvas workspace
+    function showCanvasNotification(text) {
+      hideCanvasNotification();
+      const notification = document.createElement("div");
+      notification.className = "canvas-notification";
+      notification.id = "canvas-active-tool-notification";
+      notification.innerHTML = `<i class="fa-solid fa-circle-info"></i> <span>${text}</span>`;
+      editorPdfWrapper.appendChild(notification);
+    }
+
+    function hideCanvasNotification() {
+      const existing = document.getElementById("canvas-active-tool-notification");
+      if (existing) {
+        existing.remove();
+      }
+    }
 
     // Document click listener to close editing state when clicking blank areas
     document.addEventListener("mousedown", (e) => {
@@ -298,19 +366,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- Step 3: Text & Tick Overlay Generator Handlers ---
 
-  function createTextAnnotation() {
+  function createTextAnnotation(x = null, y = null) {
     const id = "ann_" + Date.now() + "_" + Math.floor(Math.random()*1000);
     const w = 220;
     const h = 32;
-    const x = (editorPdfCanvas.width / 2) - 110;
-    const y = (editorPdfCanvas.height / 2) - 16;
+
+    const targetX = (x !== null) ? (x - 110) : ((editorPdfCanvas.width / 2) - 110);
+    const targetY = (y !== null) ? (y - 16) : ((editorPdfCanvas.height / 2) - 16);
+
+    const clampedX = Math.max(0, Math.min(targetX, editorPdfCanvas.width - w));
+    const clampedY = Math.max(0, Math.min(targetY, editorPdfCanvas.height - h));
 
     const ann = {
       id: id,
       type: "text",
       pageIndex: currentPageIndex,
-      xPercent: x / editorPdfCanvas.width,
-      yPercent: y / editorPdfCanvas.height,
+      xPercent: clampedX / editorPdfCanvas.width,
+      yPercent: clampedY / editorPdfCanvas.height,
       wPercent: w / editorPdfCanvas.width,
       hPercent: h / editorPdfCanvas.height,
       fontSize: 12, // Default size 12px as requested
@@ -318,7 +390,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     
     annotations.push(ann);
-    renderTextOverlayDOM({ ...ann, x, y, width: w, height: h });
+    renderTextOverlayDOM({ ...ann, x: clampedX, y: clampedY, width: w, height: h });
   }
 
   function renderTextOverlayDOM(ann) {
@@ -454,19 +526,23 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Dynamic Tick Checkmark annotation
-  function createTickAnnotation() {
+  function createTickAnnotation(x = null, y = null) {
     const id = "ann_" + Date.now() + "_" + Math.floor(Math.random()*1000);
     const w = 55;
     const h = 26;
-    const x = (editorPdfCanvas.width / 2) - 27.5;
-    const y = (editorPdfCanvas.height / 2) - 13;
+
+    const targetX = (x !== null) ? (x - 27.5) : ((editorPdfCanvas.width / 2) - 27.5);
+    const targetY = (y !== null) ? (y - 13) : ((editorPdfCanvas.height / 2) - 13);
+
+    const clampedX = Math.max(0, Math.min(targetX, editorPdfCanvas.width - w));
+    const clampedY = Math.max(0, Math.min(targetY, editorPdfCanvas.height - h));
 
     const ann = {
       id: id,
       type: "tick",
       pageIndex: currentPageIndex,
-      xPercent: x / editorPdfCanvas.width,
-      yPercent: y / editorPdfCanvas.height,
+      xPercent: clampedX / editorPdfCanvas.width,
+      yPercent: clampedY / editorPdfCanvas.height,
       wPercent: w / editorPdfCanvas.width,
       hPercent: h / editorPdfCanvas.height,
       fontSize: 10, // Default tick size is 10px as requested!
@@ -474,7 +550,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     annotations.push(ann);
-    renderTickOverlayDOM({ ...ann, x, y, width: w, height: h });
+    renderTickOverlayDOM({ ...ann, x: clampedX, y: clampedY, width: w, height: h });
   }
 
   function renderTickOverlayDOM(ann) {
@@ -992,7 +1068,15 @@ document.addEventListener("DOMContentLoaded", () => {
     zoomLevel = 1.0;
     annotations = [];
     generatedShareLink = "";
+    activeTool = null;
+    if (addTextBtn) addTextBtn.classList.remove("active");
+    if (addTickBtn) addTickBtn.classList.remove("active");
     
+    const notification = document.getElementById("canvas-active-tool-notification");
+    if (notification) {
+      notification.remove();
+    }
+
     clearEditorOverlays();
     
      shareSection.style.display = "none";

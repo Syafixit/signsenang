@@ -245,6 +245,39 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Setup modal elements
     initSignatureModal();
 
+    // PDF Canvas Click Listener for Tap-to-Place signature coordinates
+    pdfCanvas.addEventListener("click", (e) => {
+      if (!signatureData) return;
+      e.stopPropagation();
+
+      const rect = pdfCanvas.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clickY = e.clientY - rect.top;
+
+      // Current width and height in pixels
+      const w = signaturePosition.wPercent * pdfCanvas.width;
+      const h = signaturePosition.hPercent * pdfCanvas.height;
+
+      // Center the signature block at the click position
+      let newLeft = clickX - (w / 2);
+      let newTop = clickY - (h / 2);
+
+      // Clamp coordinates to remain within canvas boundaries
+      const maxLeft = pdfCanvas.width - w;
+      const maxTop = pdfCanvas.height - h;
+
+      newLeft = Math.max(0, Math.min(newLeft, maxLeft));
+      newTop = Math.max(0, Math.min(newTop, maxTop));
+
+      // Save percentage values relative to the canvas
+      signaturePosition.xPercent = newLeft / pdfCanvas.width;
+      signaturePosition.yPercent = newTop / pdfCanvas.height;
+      signaturePosition.pageIndex = currentPageIndex;
+
+      // Re-create the overlay at the new coordinates instantly!
+      createDraggableSignatureOverlay();
+    });
+
     await renderPage(currentPageIndex);
   }
 
