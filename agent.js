@@ -1012,6 +1012,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function displayShareDashboard(shareLink) {
     shareLinkText.textContent = shareLink;
+    shareLinkText.href = shareLink;
 
     try {
       new QRious({

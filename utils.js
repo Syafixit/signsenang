@@ -14,59 +14,65 @@
  */
 async function uploadToCloud(fileData, originalName) {
   const blob = new Blob([fileData], { type: "application/pdf" });
-  const uploadName = originalName.endsWith(".pdf") ? originalName : `${originalName}.pdf`;
-  const file = new File([blob], uploadName, { type: "application/pdf" });
+  
+  // Safe filename clean up for URLs
+  let safeName = originalName.replace(/[^a-zA-Z0-9.\-_]/g, "_");
+  if (!safeName.endsWith(".pdf")) safeName += ".pdf";
 
-  const formData = new FormData();
-  formData.append("file", file);
+  // Generate a random 16-character bin ID to ensure separate spaces
+  const binId = "cuckoo_" + Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
+  const uploadUrl = `https://filebin.net/${binId}/${safeName}`;
 
-  // Method 1: TmpFiles.org (Direct Upload)
+  console.log("Attempting direct upload to Filebin.net:", uploadUrl);
+  
+  // Try 1: Direct POST to Filebin.net (Legit temporary cloud storage)
   try {
-    console.log("Attempting direct upload to tmpfiles.org...");
-    const response = await fetch("https://tmpfiles.org/api/v1/upload", {
+    const response = await fetch(uploadUrl, {
       method: "POST",
-      body: formData
+      body: blob,
+      headers: {
+        "Content-Type": "application/pdf"
+      }
     });
 
     if (response.ok) {
-      const json = await response.json();
-      if (json.status === "success" && json.data && json.data.url) {
-        const rawUrl = json.data.url;
-        const downloadUrl = rawUrl.replace("https://tmpfiles.org/", "https://tmpfiles.org/dl/");
-        console.log("Successfully uploaded directly to tmpfiles.org:", downloadUrl);
-        return downloadUrl;
-      }
+      console.log("Successfully uploaded directly to Filebin.net:", uploadUrl);
+      return uploadUrl;
     }
-    throw new Error(`Direct upload status ${response.status}`);
+    throw new Error(`Filebin upload failed with status ${response.status}`);
   } catch (err) {
-    console.warn("Direct upload to tmpfiles.org failed. Trying proxied upload...", err);
+    console.warn("Direct upload to Filebin.net failed. Trying proxied upload...", err);
   }
 
-  // Method 2: TmpFiles.org via ThingProxy (CORS and Localhost WAF Bypass)
+  // Try 2: Upload to Filebin via CORS Proxy (corsproxy.io)
   try {
-    console.log("Attempting upload to tmpfiles.org via ThingProxy...");
-    const response = await fetch("https://thingproxy.freeboard.io/fetch/https://tmpfiles.org/api/v1/upload", {
+    const proxyUrl = `https://corsproxy.io/?url=${encodeURIComponent(uploadUrl)}`;
+    console.log("Attempting upload to Filebin via corsproxy.io...", proxyUrl);
+    
+    const response = await fetch(proxyUrl, {
       method: "POST",
-      body: formData
+      body: blob,
+      headers: {
+        "Content-Type": "application/pdf"
+      }
     });
 
     if (response.ok) {
-      const json = await response.json();
-      if (json.status === "success" && json.data && json.data.url) {
-        const rawUrl = json.data.url;
-        const downloadUrl = rawUrl.replace("https://tmpfiles.org/", "https://tmpfiles.org/dl/");
-        console.log("Successfully uploaded to tmpfiles.org via ThingProxy:", downloadUrl);
-        return downloadUrl;
-      }
+      console.log("Successfully uploaded to Filebin via CORS proxy:", uploadUrl);
+      return uploadUrl;
     }
-    throw new Error(`ThingProxy upload status ${response.status}`);
+    throw new Error(`Proxied Filebin upload failed with status ${response.status}`);
   } catch (err) {
-    console.warn("ThingProxy upload to tmpfiles.org failed. Trying file.io fallback...", err);
+    console.warn("Proxied Filebin upload failed. Trying backup file.io...", err);
   }
 
-  // Method 3: File.io Fallback
+  // Try 3: File.io fallback (1-time download)
   try {
-    console.log("Attempting raw upload to file.io...");
+    const file = new File([blob], safeName, { type: "application/pdf" });
+    const formData = new FormData();
+    formData.append("file", file);
+
+    console.log("Attempting upload to file.io as final backup...");
     const response = await fetch("https://file.io/?expires=1d", {
       method: "POST",
       body: formData
@@ -76,14 +82,13 @@ async function uploadToCloud(fileData, originalName) {
     
     const json = await response.json();
     if (json.success && json.link) {
-      console.log("Successfully uploaded to file.io:", json.link);
+      console.log("Successfully uploaded to file.io (Warning: 1-time download):", json.link);
       return json.link;
-    } else {
-      throw new Error("Invalid response from file.io");
     }
+    throw new Error("Invalid response from file.io");
   } catch (err) {
-    console.error("All upload targets failed.", err);
-    throw new Error("Gagal memuat naik fail. Sila cuba lagi.");
+    console.error("All upload targets failed completely.", err);
+    throw new Error("Semua storan awan gagal. Sila cuba lagi.");
   }
 }
 
