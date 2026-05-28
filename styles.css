@@ -1003,3 +1003,163 @@ footer a:hover {
     transform: scale(1);
   }
 }
+
+/* 
+  =========================================
+  Premium Mobile Responsive Overrides (WOW)
+  =========================================
+  Optimized specifically for mobile phone screens to ensure clean typography, 
+  sleek thin card borders, spacious document views, and finger-friendly controls.
+*/
+@media (max-width: 640px) {
+  .app-container {
+    padding: 0.75rem 0.4rem;
+  }
+  
+  .glass-panel {
+    padding: 1.25rem 0.75rem;
+    border-radius: var(--radius-md);
+  }
+  
+  header {
+    margin-bottom: 1.25rem;
+  }
+  
+  .logo-icon {
+    width: 34px;
+    height: 34px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+  }
+  
+  .brand-name {
+    font-size: 1.5rem;
+  }
+  
+  .brand-badge {
+    font-size: 0.65rem;
+    padding: 0.1rem 0.4rem;
+  }
+  
+  .subtitle {
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+    padding: 0 0.5rem;
+  }
+  
+  .instruction-card {
+    padding: 0.75rem 0.85rem;
+    margin-bottom: 1rem;
+    gap: 0.5rem;
+  }
+  
+  .instruction-icon {
+    font-size: 1.1rem;
+  }
+  
+  .instruction-text {
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+  
+  .dropzone-container {
+    padding: 2.2rem 1rem;
+  }
+  
+  .dropzone-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .dropzone-title {
+    font-size: 1.1rem;
+  }
+  
+  .dropzone-text {
+    font-size: 0.85rem;
+    margin-bottom: 1.25rem;
+  }
+  
+  .editor-toolbox {
+    padding: 0.5rem;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+    border-radius: var(--radius-sm);
+  }
+  
+  .toolbox-btn {
+    font-size: 0.8rem;
+    padding: 0.45rem 0.80rem;
+    flex-grow: 1; /* let buttons fill row nicely */
+  }
+  
+  .pdf-page-indicator {
+    font-size: 0.8rem;
+  }
+  
+  .pdf-viewport-scrollable {
+    padding: 0.4rem; /* thin, sleek gray background frame! */
+    max-height: 60vh;
+  }
+  
+  .link-box-container {
+    padding: 0.75rem;
+    margin-bottom: 1.25rem;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+  
+  .link-url-text {
+    font-size: 0.8rem;
+    text-align: center;
+  }
+  
+  .copy-btn {
+    width: 100%;
+    padding: 0.7rem;
+  }
+  
+  .share-card {
+    padding: 1.25rem 0.75rem;
+    gap: 0.75rem;
+  }
+  
+  .share-card-icon {
+    font-size: 1.75rem;
+  }
+  
+  .share-card-title {
+    font-size: 0.95rem;
+  }
+  
+  .share-card-desc {
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .btn {
+    font-size: 0.88rem;
+    padding: 0.7rem 1.25rem;
+    border-radius: var(--radius-sm);
+  }
+  
+  /* Signature Drawing Modal mobile optimization */
+  .signature-modal {
+    padding: 1.25rem 1rem;
+    gap: 1rem;
+    border-radius: var(--radius-md);
+  }
+  
+  .modal-title {
+    font-size: 1.1rem;
+  }
+  
+  .signature-canvas-wrapper {
+    height: 180px;
+  }
+  
+  .canvas-instruction {
+    font-size: 0.75rem;
+  }
+}
