@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cuckoo EasySign - Isi Borang & Tandatangan PDF</title>
+  <meta name="description" content="Sistem penandatangan dokumen PDF percuma, cepat, dan tanpa pendaftaran untuk ejen Cuckoo memudahkan proses pendaftaran produk customer.">
+  
+  <!-- Styling system -->
+  <link rel="stylesheet" href="styles.css">
+  
+  <!-- FontAwesome Icons for premium UI -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    /* Styling extension for inline text inputs in editor */
+    .text-draggable-overlay {
+      position: absolute;
+      border: 1px dashed var(--primary);
+      background: rgba(255, 255, 255, 0.9);
+      padding: 4px 8px;
+      cursor: move;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      touch-action: none;
+      user-select: none;
+      min-width: 80px;
+      border-radius: 4px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+    .text-draggable-overlay input {
+      border: none;
+      background: transparent;
+      color: var(--text-primary);
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      font-weight: bold;
+      width: 100%;
+      outline: none;
+      padding: 0;
+    }
+    .editor-toolbox {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid var(--panel-border);
+      border-radius: var(--radius-md);
+      padding: 0.75rem 1.25rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .toolbox-btn {
+      font-size: 0.9rem;
+      padding: 0.5rem 1.2rem;
+    }
+    .badge-editor {
+      background: rgba(220, 38, 38, 0.05);
+      border: 1px solid rgba(220, 38, 38, 0.15);
+      color: var(--primary);
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 99px;
+      font-size: 0.75rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container" style="max-width: 850px;">
+    <!-- Brand Header -->
+    <header>
+      <div class="logo-container">
+        <div class="logo-icon">C</div>
+        <h1 class="brand-name">Cuckoo EasySign</h1>
+        <span class="brand-badge">Borang & Sign</span>
+      </div>
+      <p class="subtitle">Sistem isi borang Cuckoo (Nama, IC, Tick) & tandatangan digital pelanggan secara percuma.</p>
+    </header>
+
+    <!-- Main Workspace -->
+    <main>
+      <div class="glass-panel" id="main-panel">
+        
+        <!-- Welcome & Upload Section -->
+        <div id="upload-section">
+          <div class="instruction-card">
+            <div class="instruction-icon">
+              <i class="fa-solid fa-bolt" style="color: var(--primary);"></i>
+            </div>
+            <div class="instruction-text">
+              <strong>Isi Borang & Sign:</strong> Muat naik dokumen PDF pendaftaran dari Cuckoo. Ejen boleh masukkan **Nama, No IC, dan tanda Tick** terus pada borang sebelum link tandatangan dihantar kepada customer!
+            </div>
+          </div>
+
+          <!-- Dropzone -->
+          <div class="dropzone-container" id="dropzone">
+            <input type="file" id="file-input" class="file-input" accept="application/pdf">
+            <div class="dropzone-icon">
+              <i class="fa-solid fa-file-pdf" style="color: var(--primary);"></i>
+            </div>
+            <h3 class="dropzone-title">Pilih Dokumen PDF Cuckoo</h3>
+            <p class="dropzone-text">Seret & letak fail PDF di sini, atau klik untuk memilih fail</p>
+            <button class="btn btn-primary" id="select-btn">
+              <i class="fa-solid fa-cloud-arrow-up"></i> Muat Naik Fail
+            </button>
+          </div>
+        </div>
+
+        <!-- PDF Interactive Editor Workspace (Shown after upload) -->
+        <div id="editor-section" style="display: none; animation: fadeInUp 0.6s ease;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2 style="font-size: 1.4rem;"><i class="fa-solid fa-sliders" style="color: var(--primary);"></i> Editor Borang Cuckoo</h2>
+            <span class="badge-editor" id="editor-file-name">cuckoo_form.pdf</span>
+          </div>
+
+          <!-- Floating Toolbox -->
+          <div class="editor-toolbox">
+            <!-- Renamed Tambah Nama / IC to Tambah Teks as requested -->
+            <button class="btn btn-secondary toolbox-btn" id="add-text-btn">
+              <i class="fa-solid fa-i-cursor" style="color: var(--primary);"></i> Tambah Teks
+            </button>
+            <button class="btn btn-secondary toolbox-btn" id="add-tick-btn">
+              <i class="fa-solid fa-square-check" style="color: var(--primary);"></i> Tambah Tick (✓)
+            </button>
+            
+            <div style="height: 24px; width: 1px; background: rgba(0,0,0,0.1); margin: 0 0.25rem;"></div>
+            
+            <!-- Zoom controls in editor -->
+            <button class="btn btn-secondary" id="editor-zoom-out-btn" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;" title="Zoom Out">
+              <i class="fa-solid fa-magnifying-glass-minus"></i>
+            </button>
+            <span class="pdf-page-indicator" id="editor-zoom-val" style="font-size: 0.85rem; align-self: center; min-width: 40px; text-align: center;">100%</span>
+            <button class="btn btn-secondary" id="editor-zoom-in-btn" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;" title="Zoom In">
+              <i class="fa-solid fa-magnifying-glass-plus"></i>
+            </button>
+            
+            <div style="height: 24px; width: 1px; background: rgba(0,0,0,0.1); margin: 0 0.25rem;"></div>
+            
+            <!-- Pagination Controls -->
+            <button class="btn btn-secondary" id="editor-prev-btn" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">
+              <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <span class="pdf-page-indicator" id="editor-page-indicator" style="font-size: 0.85rem; align-self: center;">Halaman 1 / 1</span>
+            <button class="btn btn-secondary" id="editor-next-btn" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">
+              <i class="fa-solid fa-chevron-right"></i>
+            </button>
+          </div>
+
+          <!-- PDF Editor Page viewport wrapper with scroll support -->
+          <div class="pdf-viewer-container" style="margin-bottom: 2rem;">
+            <div class="pdf-viewport-scrollable">
+              <div class="pdf-viewport-wrapper" id="editor-pdf-wrapper">
+                <canvas id="editor-pdf-canvas"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Actions -->
+          <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; border-top: 1px solid rgba(0,0,0,0.06); padding-top: 1.5rem;">
+            <!-- Added instant Local Download button for agent after finishing edit -->
+            <button class="btn btn-secondary" id="editor-download-pdf-btn" style="width: 100%; max-width: 320px; font-size: 1.05rem; padding: 0.9rem; border-color: var(--success); color: var(--success); background: rgba(16, 185, 129, 0.02);">
+              <i class="fa-solid fa-download"></i> Muat Turun PDF (Lokal)
+            </button>
+            <button class="btn btn-success" id="generate-filled-pdf-btn" style="width: 100%; max-width: 380px; font-size: 1.05rem; padding: 0.9rem;">
+              <i class="fa-solid fa-file-signature"></i> Selesai Mengisi & Sedia Link
+            </button>
+          </div>
+        </div>
+
+        <!-- Encryption & Uploading Progress Section -->
+        <div class="progress-panel" id="progress-section">
+          <h2 class="dashboard-title">Menyediakan Link Tandatangan...</h2>
+          
+          <ul class="progress-list">
+            <li class="progress-item" id="step-encrypt">
+              <div class="progress-marker">
+                <span>1</span>
+                <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+              </div>
+              <div class="progress-text">
+                <h4 class="progress-title">Menyematkan Nama, IC & Tanda Tick ke PDF</h4>
+              </div>
+              <div class="spinner"></div>
+            </li>
+            
+            <li class="progress-item" id="step-upload">
+              <div class="progress-marker">
+                <span>2</span>
+                <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+              </div>
+              <div class="progress-text">
+                <h4 class="progress-title">Muat naik fail & jana link tandatangan</h4>
+              </div>
+              <div class="spinner"></div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Share Dashboard Section -->
+        <div class="share-dashboard" id="share-section">
+          <div style="text-align: center;">
+            <div class="success-badge">
+              <i class="fa-solid fa-circle-check"></i> Sedia Untuk Ditandatangani
+            </div>
+            <h2 class="dashboard-title">Borang Sedia Dikongsi!</h2>
+            <p class="subtitle" style="margin-bottom: 2rem;">Butiran Nama, IC & Ticks telah dimasukkan. Hantar link di bawah kepada customer untuk ditandatangani.</p>
+          </div>
+
+          <!-- Sharing Link Input Box -->
+          <div class="link-box-container">
+            <i class="fa-solid fa-link" style="color: var(--primary); font-size: 1.2rem;"></i>
+            <div class="link-url-text" id="share-link-text">https://cuckooeasysign.com/sign.html?file=...</div>
+            <button class="btn btn-primary copy-btn" id="copy-link-btn">
+              <i class="fa-solid fa-copy"></i> Copy Link
+            </button>
+          </div>
+
+          <!-- Sharing Actions Grid -->
+          <div class="share-actions-grid">
+            <!-- Share on WhatsApp -->
+            <div class="share-card">
+              <div class="share-card-icon whatsapp-icon">
+                <i class="fa-brands fa-whatsapp"></i>
+              </div>
+              <div>
+                <h3 class="share-card-title">Hantar via WhatsApp</h3>
+                <p class="share-card-desc">Hantar mesej mesra beserta link tandatangan terus kepada customer.</p>
+              </div>
+              <button class="btn btn-success" id="whatsapp-share-btn" style="width: 100%;">
+                <i class="fa-brands fa-whatsapp"></i> Hantar Ke WhatsApp
+              </button>
+            </div>
+
+            <!-- In-person scan QR -->
+            <div class="share-card">
+              <div class="share-card-icon qr-icon">
+                <i class="fa-solid fa-qrcode"></i>
+              </div>
+              <div>
+                <h3 class="share-card-title">Scan QR Code</h3>
+                <p class="share-card-desc">Jika customer berada bersama anda, minta mereka scan QR code ini untuk mula sign.</p>
+              </div>
+              <div class="qr-canvas-wrapper">
+                <canvas id="qr-canvas"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Primary Agent Download Button -->
+          <div style="text-align: center; margin-bottom: 2rem; border-bottom: 1px solid rgba(0,0,0,0.06); padding-bottom: 1.5rem;">
+            <button class="btn btn-success" id="agent-download-pdf-btn" style="width: 100%; max-width: 450px; font-size: 1.05rem;">
+              <i class="fa-solid fa-download"></i> Muat Turun PDF Siap Diisi (Untuk Ejen)
+            </button>
+          </div>
+
+          <!-- Bottom Actions -->
+          <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+            <button class="btn btn-secondary" id="action-sign-local-btn">
+              <i class="fa-solid fa-pen-nib"></i> Tandatangan Terus Di Sini (Offline)
+            </button>
+            <button class="btn btn-secondary" id="reset-btn">
+              <i class="fa-solid fa-arrow-rotate-left"></i> Upload PDF Baru
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Bottom Footer Info -->
+    <footer>
+      <p>Cuckoo EasySign - Sistem Penandatangan PDF Mudah Alih Percuma.</p>
+      <p style="margin-top: 0.5rem; font-size: 0.8rem;">Disediakan khas untuk pendaftaran produk Cuckoo. Mudah, cepat dan percuma.</p>
+    </footer>
+  </div>
+
+  <!-- PDF.js CDN libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  
+  <!-- PDF-Lib CDN library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+  
+  <!-- Signature Pad CDN library -->
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+  
+  <!-- QR Code generation library (QRious) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+  
+  <!-- Cryptographic tools & uploads -->
+  <script src="utils.js"></script>
+  
+  <!-- Agent Dashboard Logic -->
+  <script src="agent.js"></script>
+</body>
+</html>

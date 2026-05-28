@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cuckoo EasySign - Tandatangan Dokumen</title>
+  <meta name="description" content="Sahkan dan tandatangan dokumen pendaftaran Cuckoo anda dengan mudah menggunakan telefon pintar.">
+  
+  <!-- Styling system -->
+  <link rel="stylesheet" href="styles.css">
+  
+  <!-- FontAwesome Icons for premium UI -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body style="padding-bottom: 2rem;">
+
+  <!-- Main Portal Viewport -->
+  <div class="app-container" style="max-width: 800px;">
+    
+    <!-- Header -->
+    <header style="margin-bottom: 1.5rem;">
+      <div class="logo-container">
+        <div class="logo-icon"><i class="fa-solid fa-pen-nib"></i></div>
+        <h1 class="brand-name">Cuckoo EasySign</h1>
+      </div>
+      <p class="subtitle" style="font-size: 0.95rem;">Tandatangan dokumen anda dengan mudah dan cepat terus dari telefon pintar.</p>
+    </header>
+
+    <!-- Loading Screen -->
+    <div class="glass-panel" id="loading-panel" style="text-align: center; padding: 4rem 2rem;">
+      <div class="logo-icon" style="width: 60px; height: 60px; font-size: 2rem; margin: 0 auto 2rem; animation: pulseGlow 1.5s infinite alternate;">
+        <i class="fa-solid fa-file-pdf"></i>
+      </div>
+      <h2 style="margin-bottom: 1rem; color: var(--text-primary);">Membuka Dokumen...</h2>
+      <p class="subtitle" id="loading-status" style="margin-bottom: 2.5rem;">Memuat turun fail daripada storan...</p>
+      
+      <div style="display: flex; justify-content: center;">
+        <div class="spinner" style="display: block; width: 40px; height: 40px; border-width: 4px;"></div>
+      </div>
+    </div>
+
+    <!-- Workspace Screen (Hidden during loading) -->
+    <div class="glass-panel" id="workspace-panel" style="display: none; padding: 1.5rem;">
+      
+      <!-- Instructional Note -->
+      <div class="instruction-card" style="margin-bottom: 1rem; padding: 0.8rem 1rem;">
+        <div class="instruction-icon" style="font-size: 1.2rem;">
+          <i class="fa-solid fa-circle-info"></i>
+        </div>
+        <div class="instruction-text" style="font-size: 0.85rem;" id="step-instruction">
+          Langkah 1: Klik butang <strong>"Tulis Tandatangan"</strong> di bawah untuk melukis tandatangan anda.
+        </div>
+      </div>
+
+      <!-- PDF Canvas Viewport Container with scroll support -->
+      <div class="pdf-viewer-container">
+        <div class="pdf-viewport-scrollable">
+          <div class="pdf-viewport-wrapper" id="pdf-wrapper">
+            <!-- Canvas for PDF.js page rendering -->
+            <canvas id="pdf-canvas"></canvas>
+          </div>
+        </div>
+
+        <!-- Navigation & Floating controls -->
+        <div class="pdf-controls">
+          <div class="pdf-controls-nav">
+            <button class="btn btn-secondary" id="prev-page-btn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">
+              <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <span class="pdf-page-indicator" id="page-num-indicator">Halaman 1 / 1</span>
+            <button class="btn btn-secondary" id="next-page-btn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">
+              <i class="fa-solid fa-chevron-right"></i>
+            </button>
+          </div>
+          
+          <!-- Customer Zoom controls -->
+          <div style="display: flex; align-items: center; gap: 0.35rem; margin: 0 0.5rem;">
+            <button class="btn btn-secondary" id="zoom-out-btn" style="padding: 0.35rem 0.6rem; font-size: 0.75rem;" title="Zoom Out">
+              <i class="fa-solid fa-magnifying-glass-minus"></i>
+            </button>
+            <span class="pdf-page-indicator" id="zoom-val" style="font-size: 0.75rem; min-width: 35px; text-align: center;">100%</span>
+            <button class="btn btn-secondary" id="zoom-in-btn" style="padding: 0.35rem 0.6rem; font-size: 0.75rem;" title="Zoom In">
+              <i class="fa-solid fa-magnifying-glass-plus"></i>
+            </button>
+          </div>
+          
+          <!-- Large floating draw prompt -->
+          <div class="tap-to-sign-prompt" id="open-sign-modal-btn">
+            <i class="fa-solid fa-signature"></i> Tulis Tandatangan
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Action Footer Buttons -->
+      <div style="text-align: center; display: flex; flex-direction: column; gap: 1rem; align-items: center; margin-top: 1.5rem;">
+        <!-- Download Final Doc Button (Visible only after signature placed) -->
+        <button class="btn btn-success" id="download-signed-pdf-btn" style="width: 100%; max-width: 450px; display: none; font-size: 1.1rem; padding: 1rem 2rem;">
+          <i class="fa-solid fa-file-circle-check" style="font-size: 1.3rem;"></i> Sahkan & Muat Turun PDF
+        </button>
+        <p class="subtitle" style="font-size: 0.8rem;">*Nota: Pastikan anda meletakkan tandatangan di tempat yang betul sebelum menekan butang Sahkan.</p>
+      </div>
+
+    </div>
+
+    <!-- Success View Overlay -->
+    <div class="glass-panel" id="success-panel" style="display: none; text-align: center; padding: 4rem 2rem; animation: scaleIn 0.5s ease;">
+      <div class="logo-icon" style="width: 70px; height: 70px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); font-size: 2.5rem; margin: 0 auto 2rem; border-radius: 50%; box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);">
+        <i class="fa-solid fa-check"></i>
+      </div>
+      <h2 style="margin-bottom: 1rem; color: var(--success);">Tandatangan Selesai!</h2>
+      <p class="subtitle" style="font-size: 1.05rem; max-width: 500px; margin: 0 auto 2.5rem;">
+        Borang pendaftaran Cuckoo anda yang lengkap ditandatangani telah berjaya disimpan ke dalam peranti anda.
+      </p>
+      
+      <div class="instruction-card" style="margin: 0 auto 2.5rem; max-width: 550px; text-align: left;">
+        <div class="instruction-icon" style="color: var(--success); font-size: 1.5rem;">
+          <i class="fa-solid fa-share-nodes"></i>
+        </div>
+        <div class="instruction-text" style="color: var(--text-primary);">
+          <strong>Langkah Seterusnya:</strong> Sila buka aplikasi **WhatsApp** anda dan hantar semula fail PDF yang baru dimuat turun ini kepada ejen Cuckoo anda untuk melengkapkan proses pendaftaran. Terima kasih!
+        </div>
+      </div>
+      
+      <p class="subtitle" style="font-size: 0.8rem; color: var(--text-muted);">Cuckoo EasySign - 100% Percuma & Mudah</p>
+    </div>
+
+  </div>
+
+  <!-- Signature Capture Modal -->
+  <div class="modal-overlay" id="signature-modal-overlay">
+    <div class="signature-modal">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fa-solid fa-signature" style="color: var(--primary);"></i> Tulis Tandatangan Anda</h3>
+        <button class="modal-close-btn" id="close-modal-btn">&times;</button>
+      </div>
+      
+      <!-- Canvas Drawing Board -->
+      <div class="signature-canvas-wrapper">
+        <div class="canvas-instruction">Sila lukis tandatangan anda di dalam kotak ini</div>
+        <canvas id="signature-canvas"></canvas>
+      </div>
+      
+      <!-- Modal Buttons -->
+      <div class="modal-overlay-buttons" style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1.5rem;">
+        <button class="btn btn-secondary" id="clear-signature-btn" style="padding: 0.6rem 1.2rem; font-size: 0.9rem;">
+          <i class="fa-solid fa-eraser"></i> Padam
+        </button>
+        <button class="btn btn-primary" id="save-signature-btn" style="padding: 0.6rem 1.2rem; font-size: 0.9rem;">
+          <i class="fa-solid fa-check"></i> Simpan
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PDF.js CDN libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  
+  <!-- PDF-Lib CDN library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+  
+  <!-- Signature Pad CDN library -->
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+  
+  <!-- Core Cryptography Utility -->
+  <script src="utils.js"></script>
+  
+  <!-- Customer Signature Portal Logic -->
+  <script src="customer.js"></script>
+</body>
+</html>
