@@ -530,8 +530,8 @@ header {
 /* Drag-Resize Signature Overlay Box */
 .sig-draggable-overlay {
   position: absolute;
-  border: 2px dashed var(--primary);
-  background: rgba(220, 38, 38, 0.15);
+  border: 1.5px dashed var(--primary);
+  background: transparent;
   cursor: move;
   display: flex;
   align-items: center;
@@ -1127,8 +1127,12 @@ footer a:hover {
 
   /* Make the app take full viewport height and width only when editor or customer portal is active */
   body.editor-active, body.customer-active {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    width: 100vw !important;
+    height: 100dvh !important;
     overflow: hidden !important;
-    height: 100vh !important;
     margin: 0 !important;
     padding: 0 !important;
   }
@@ -1136,9 +1140,10 @@ footer a:hover {
   body.editor-active .app-container, body.customer-active .app-container {
     max-width: 100% !important;
     width: 100vw !important;
-    height: 100vh !important;
+    height: 100dvh !important;
     padding: 0 !important;
     margin: 0 !important;
+    overflow: hidden !important;
   }
 
   body.editor-active header, body.customer-active header {
@@ -1155,7 +1160,7 @@ footer a:hover {
     box-shadow: none !important;
     padding: 0 !important;
     margin: 0 !important;
-    height: 100vh !important;
+    height: 100dvh !important;
     display: flex;
     flex-direction: column;
     background: #f1f5f9 !important; /* light slate background */
@@ -1165,7 +1170,7 @@ footer a:hover {
   body.editor-active #editor-section {
     display: flex !important;
     flex-direction: column !important;
-    height: 100vh !important;
+    height: 100dvh !important;
     position: relative;
     padding: 0 !important;
     justify-content: space-between;
@@ -1355,7 +1360,7 @@ footer a:hover {
   body.customer-active #workspace-panel {
     display: flex !important;
     flex-direction: column !important;
-    height: 100vh !important;
+    height: 100dvh !important;
     position: relative;
     padding: 0 !important;
     justify-content: space-between;

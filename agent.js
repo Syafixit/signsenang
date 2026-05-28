@@ -1042,8 +1042,11 @@ document.addEventListener("DOMContentLoaded", () => {
     navigator.clipboard.writeText(generatedShareLink)
       .then(() => {
         const originalContent = copyLinkBtn.innerHTML;
-        copyLinkBtn.innerHTML = `<i class="fa-solid fa-check"></i> Copied!`;
+        copyLinkBtn.innerHTML = `<i class="fa-solid fa-check"></i> Copied & Opened!`;
         copyLinkBtn.style.background = "linear-gradient(135deg, #10b981 0%, #059669 100%)";
+        
+        // Open the generated link in a new tab instantly!
+        window.open(generatedShareLink, "_blank");
         
         setTimeout(() => {
           copyLinkBtn.innerHTML = originalContent;
@@ -1052,7 +1055,8 @@ document.addEventListener("DOMContentLoaded", () => {
       })
       .catch((err) => {
         console.error("Clipboard copy failure:", err);
-        alert("Gagal menyalin link secara automatik. Sila salin secara manual.");
+        // Fallback open even if clipboard copy fails
+        window.open(generatedShareLink, "_blank");
       });
   });
 
