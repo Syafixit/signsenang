@@ -425,15 +425,15 @@ header {
 }
 
 .share-actions-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  display: flex;
+  justify-content: center;
   margin-bottom: 2rem;
+  width: 100%;
 }
 
 @media (max-width: 640px) {
   .share-actions-grid {
-    grid-template-columns: 1fr;
+    display: block;
   }
 }
 
@@ -448,6 +448,9 @@ header {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  width: 100%;
+  max-width: 450px;
+  margin: 0 auto;
   transition: all 0.3s ease;
 }
 
@@ -530,8 +533,8 @@ header {
 /* Drag-Resize Signature Overlay Box */
 .sig-draggable-overlay {
   position: absolute;
-  border: 1.5px dashed var(--primary);
-  background: transparent;
+  border: 1.5px dashed transparent !important;
+  background: transparent !important;
   cursor: move;
   display: flex;
   align-items: center;
@@ -540,6 +543,28 @@ header {
   user-select: none;
   min-width: 50px;
   min-height: 25px;
+  box-shadow: none !important;
+}
+
+.sig-draggable-overlay.editing {
+  border: 1.5px dashed var(--primary) !important;
+  background: rgba(255, 255, 255, 0.45) !important;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08) !important;
+}
+
+/* Hide controls by default when unselected */
+.sig-draggable-overlay .sig-resize-handle,
+.sig-draggable-overlay .sig-delete-btn {
+  display: none !important;
+}
+
+/* Show controls only when selected/editing */
+.sig-draggable-overlay.editing .sig-resize-handle {
+  display: block !important;
+}
+
+.sig-draggable-overlay.editing .sig-delete-btn {
+  display: flex !important;
 }
 
 .sig-draggable-overlay img {

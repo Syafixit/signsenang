@@ -65,6 +65,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
+  // Global click/tap outside handler to unselect signature
+  document.addEventListener("mousedown", (e) => {
+    if (!e.target.closest("#sig-overlay") && !e.target.closest("#open-sign-modal-btn")) {
+      const overlay = document.getElementById("sig-overlay");
+      if (overlay) overlay.classList.remove("editing");
+    }
+  });
+  document.addEventListener("touchstart", (e) => {
+    if (!e.target.closest("#sig-overlay") && !e.target.closest("#open-sign-modal-btn")) {
+      const overlay = document.getElementById("sig-overlay");
+      if (overlay) overlay.classList.remove("editing");
+    }
+  });
+
   // Helper to open the drawing modal and ensure high-DPI canvas resizing
   function openSignatureModal() {
     if (sigModalOverlay) {
@@ -433,8 +447,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!signatureData || signaturePosition.pageIndex !== currentPageIndex) return;
 
     const overlay = document.createElement("div");
-    overlay.className = "sig-draggable-overlay";
+    // Start in editing mode on initial placement
+    overlay.className = "sig-draggable-overlay editing";
     overlay.id = "sig-overlay";
+
+    overlay.addEventListener("click", (e) => {
+      e.stopPropagation();
+      overlay.classList.add("editing");
+    });
+    overlay.addEventListener("touchstart", (e) => {
+      overlay.classList.add("editing");
+    }, { passive: true });
     
     const img = document.createElement("img");
     img.src = signatureData;
@@ -634,7 +657,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       // Convert percentages directly back to fixed absolute PDF points
       // This bypasses any client zoom factor completely and is 100% accurate!
       const pdfX = signaturePosition.xPercent * pdfWidthPoints;
-      const pdfY = pdfHeightPoints - ((signaturePosition.yPercent + signaturePosition.hPercent) * pdfHeightPoints);
+      const pdfY = pdfHeightPoints - (signaturePosition.yPercent * pdfHeightPoints) - (signaturePosition.hPercent * pdfHeightPoints * 0.68);
       
       const pdfWidth = signaturePosition.wPercent * pdfWidthPoints;
       const pdfHeight = signaturePosition.hPercent * pdfHeightPoints;
