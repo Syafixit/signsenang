@@ -264,8 +264,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // Fetch page
     const page = await pdfjsDocInstance.getPage(index + 1);
     
-    // Fit canvas width nicely in editor wrapper, scaled by zoomLevel
-    const containerWidth = editorPdfWrapper.parentElement.clientWidth - 30 || 600;
+    // Fit canvas width nicely in editor wrapper, scaled by zoomLevel from constrained container
+    const viewerContainer = document.querySelector("#editor-section .pdf-viewer-container") || editorPdfWrapper.parentElement;
+    const containerWidth = (viewerContainer.clientWidth || window.innerWidth) - 30;
     const originalViewport = page.getViewport({ scale: 1.0 });
     
     const baseScale = containerWidth / originalViewport.width;

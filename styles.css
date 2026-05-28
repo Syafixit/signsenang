@@ -1423,6 +1423,8 @@ footer a:hover {
     flex: 1 !important;
     display: flex !important;
     flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
     height: auto !important;
     overflow: hidden !important;
     margin: 0 !important;
