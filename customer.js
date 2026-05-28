@@ -65,6 +65,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
+  // Helper to open the drawing modal and ensure high-DPI canvas resizing
+  function openSignatureModal() {
+    if (sigModalOverlay) {
+      sigModalOverlay.classList.add("active");
+      setTimeout(resizeSignatureModalCanvas, 200);
+    }
+  }
+
   async function processManualUploadedFile(file) {
     try {
       loadingPanel.style.display = "block";
@@ -83,6 +91,9 @@ document.addEventListener("DOMContentLoaded", async () => {
           
           loadingPanel.style.display = "none";
           workspacePanel.style.display = "block";
+          
+          // Auto-trigger customer signature canvas modal immediately
+          openSignatureModal();
         } catch (err) {
           console.error("Gagal memproses fail manual:", err);
           alert("Gagal membaca fail PDF: " + err.message);
@@ -123,6 +134,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       loadingPanel.style.display = "none";
       workspacePanel.style.display = "block";
+      
+      // Auto-trigger customer signature canvas modal immediately
+      openSignatureModal();
 
     } else if (fileUrl) {
       loadingStatus.textContent = "Menyambung ke storan awan untuk memuat turun PDF...";
@@ -135,6 +149,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       loadingPanel.style.display = "none";
       workspacePanel.style.display = "block";
+      
+      // Auto-trigger customer signature canvas modal immediately
+      openSignatureModal();
 
     } else {
       // Direct open without arguments - show manual upload prompt immediately instead of error
