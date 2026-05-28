@@ -365,11 +365,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const deleteBtn = document.createElement("div");
     deleteBtn.className = "sig-delete-btn";
     deleteBtn.innerHTML = "&times;";
-    deleteBtn.style.top = "-8px";
-    deleteBtn.style.right = "-8px";
-    deleteBtn.style.width = "18px";
-    deleteBtn.style.height = "18px";
-    deleteBtn.style.fontSize = "0.7rem";
     overlay.appendChild(deleteBtn);
 
     // Copy button next to the delete button (on top-left)
@@ -377,12 +372,14 @@ document.addEventListener("DOMContentLoaded", () => {
     copyBtn.className = "sig-copy-btn";
     copyBtn.innerHTML = '<i class="fa-solid fa-copy"></i>';
     copyBtn.title = "Salin Teks";
-    copyBtn.style.top = "-8px";
-    copyBtn.style.left = "-8px";
-    copyBtn.style.width = "18px";
-    copyBtn.style.height = "18px";
-    copyBtn.style.fontSize = "0.65rem";
     overlay.appendChild(copyBtn);
+
+    // Drag handle (on bottom-left)
+    const dragHandle = document.createElement("div");
+    dragHandle.className = "sig-drag-handle";
+    dragHandle.innerHTML = '<i class="fa-solid fa-up-down-left-right"></i>';
+    dragHandle.title = "Gerakkan";
+    overlay.appendChild(dragHandle);
 
     editorPdfWrapper.appendChild(overlay);
 
@@ -524,11 +521,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const deleteBtn = document.createElement("div");
     deleteBtn.className = "sig-delete-btn";
     deleteBtn.innerHTML = "&times;";
-    deleteBtn.style.top = "-8px";
-    deleteBtn.style.right = "-8px";
-    deleteBtn.style.width = "18px";
-    deleteBtn.style.height = "18px";
-    deleteBtn.style.fontSize = "0.7rem";
     overlay.appendChild(deleteBtn);
 
     // Copy button next to the delete button (on top-left)
@@ -536,12 +528,14 @@ document.addEventListener("DOMContentLoaded", () => {
     copyBtn.className = "sig-copy-btn";
     copyBtn.innerHTML = '<i class="fa-solid fa-copy"></i>';
     copyBtn.title = "Salin Tick";
-    copyBtn.style.top = "-8px";
-    copyBtn.style.left = "-8px";
-    copyBtn.style.width = "18px";
-    copyBtn.style.height = "18px";
-    copyBtn.style.fontSize = "0.65rem";
     overlay.appendChild(copyBtn);
+
+    // Drag handle (on bottom-left)
+    const dragHandle = document.createElement("div");
+    dragHandle.className = "sig-drag-handle";
+    dragHandle.innerHTML = '<i class="fa-solid fa-up-down-left-right"></i>';
+    dragHandle.title = "Gerakkan";
+    overlay.appendChild(dragHandle);
 
     editorPdfWrapper.appendChild(overlay);
 
@@ -620,11 +614,31 @@ document.addEventListener("DOMContentLoaded", () => {
   let activeAnn = null;
 
   function setupDraggableEvents(overlay, ann) {
-    overlay.addEventListener("mousedown", onDragStart);
-    overlay.addEventListener("touchstart", onDragStart, { passive: false });
+    const handle = overlay.querySelector(".sig-drag-handle");
+    
+    // Bind to orange drag handle specifically (excellent for mobile)
+    if (handle) {
+      handle.addEventListener("mousedown", onDragStart);
+      handle.addEventListener("touchstart", onDragStart, { passive: false });
+    }
+
+    // Keep binding to blank parts of the overlay for desktop
+    overlay.addEventListener("mousedown", (e) => {
+      if (e.target.tagName === "INPUT" || e.target.tagName === "BUTTON" || e.target.closest(".font-size-widget") || e.target.closest(".sig-drag-handle") || e.target.closest(".sig-delete-btn") || e.target.closest(".sig-copy-btn")) return;
+      onDragStart(e);
+    });
+
+    overlay.addEventListener("touchstart", (e) => {
+      if (e.target.tagName === "INPUT" || e.target.tagName === "BUTTON" || e.target.closest(".font-size-widget") || e.target.closest(".sig-drag-handle") || e.target.closest(".sig-delete-btn") || e.target.closest(".sig-copy-btn")) return;
+      onDragStart(e);
+    }, { passive: false });
 
     function onDragStart(e) {
-      if (e.target.tagName === "INPUT" || e.target.tagName === "BUTTON") return;
+      // Prevent focus bubbling on inputs when dragging via the handle
+      if (e.currentTarget === handle) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
       
       const clientX = e.type.startsWith("touch") ? e.touches[0].clientX : e.clientX;
       const clientY = e.type.startsWith("touch") ? e.touches[0].clientY : e.clientY;

@@ -557,48 +557,59 @@ header {
   box-shadow: 0 2px 4px rgba(0,0,0,0.15);
 }
 
-.sig-delete-btn {
+.sig-delete-btn, .sig-copy-btn, .sig-drag-handle {
   position: absolute;
-  top: -12px;
-  right: -12px;
   width: 22px;
   height: 22px;
-  background: var(--danger);
   border: 1px solid white;
   color: white;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.75rem;
-  font-weight: 800;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-}
-
-.sig-copy-btn {
-  position: absolute;
-  top: -12px;
-  left: -12px;
-  width: 22px;
-  height: 22px;
-  background: #3b82f6; /* Beautiful copy blue */
-  border: 1px solid white;
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-  font-weight: 800;
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0,0,0,0.15);
   transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.sig-delete-btn {
+  top: -10px;
+  right: -10px;
+  background: var(--danger);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.sig-delete-btn:hover {
+  background: #dc2626;
+  transform: scale(1.15);
+}
+
+.sig-copy-btn {
+  top: -10px;
+  left: -10px;
+  background: #3b82f6; /* Modern interactive blue */
+  font-size: 0.65rem;
 }
 
 .sig-copy-btn:hover {
   background: #2563eb;
-  transform: scale(1.1);
+  transform: scale(1.15);
+}
+
+.sig-drag-handle {
+  bottom: -10px;
+  left: -10px;
+  background: #f97316; /* Mobile drag orange */
+  font-size: 0.65rem;
+  cursor: move;
+  touch-action: none;
+}
+
+.sig-drag-handle:hover {
+  background: #ea580c;
+  transform: scale(1.15);
 }
 
 /* Floating Actions on PDF page */
