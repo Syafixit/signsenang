@@ -7,7 +7,8 @@
 
 /**
  * Uploads a raw PDF file to a free file hosting service.
- * Tries direct tmpfiles.org first, then proxied tmpfiles.org via ThingProxy, and falls back to file.io.
+ * Tries direct litterbox (catbox.moe) first (72h storage, natively CORS-enabled upload & download),
+ * then falls back to direct tmpfiles.org, and finally direct uguu.se.
  * @param {ArrayBuffer} fileData - The raw PDF binary data
  * @param {string} originalName - Original file name
  * @returns {Promise<string>} - Direct download URL
@@ -15,80 +16,86 @@
 async function uploadToCloud(fileData, originalName) {
   const blob = new Blob([fileData], { type: "application/pdf" });
   
-  // Safe filename clean up for URLs
+  // Safe filename clean up
   let safeName = originalName.replace(/[^a-zA-Z0-9.\-_]/g, "_");
   if (!safeName.endsWith(".pdf")) safeName += ".pdf";
 
-  // Generate a random 16-character bin ID to ensure separate spaces
-  const binId = "cuckoo_" + Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 10);
-  const uploadUrl = `https://filebin.net/${binId}/${safeName}`;
+  const file = new File([blob], safeName, { type: "application/pdf" });
 
-  console.log("Attempting direct upload to Filebin.net:", uploadUrl);
-  
-  // Try 1: Direct POST to Filebin.net (Legit temporary cloud storage)
+  // Try 1: Litterbox (Catbox.moe) - Direct, Natively CORS-enabled, stores for 72 hours
   try {
-    const response = await fetch(uploadUrl, {
-      method: "POST",
-      body: blob,
-      headers: {
-        "Content-Type": "application/pdf"
-      }
-    });
-
-    if (response.ok) {
-      console.log("Successfully uploaded directly to Filebin.net:", uploadUrl);
-      return uploadUrl;
-    }
-    throw new Error(`Filebin upload failed with status ${response.status}`);
-  } catch (err) {
-    console.warn("Direct upload to Filebin.net failed. Trying proxied upload...", err);
-  }
-
-  // Try 2: Upload to Filebin via CORS Proxy (corsproxy.io)
-  try {
-    const proxyUrl = `https://corsproxy.io/?url=${encodeURIComponent(uploadUrl)}`;
-    console.log("Attempting upload to Filebin via corsproxy.io...", proxyUrl);
-    
-    const response = await fetch(proxyUrl, {
-      method: "POST",
-      body: blob,
-      headers: {
-        "Content-Type": "application/pdf"
-      }
-    });
-
-    if (response.ok) {
-      console.log("Successfully uploaded to Filebin via CORS proxy:", uploadUrl);
-      return uploadUrl;
-    }
-    throw new Error(`Proxied Filebin upload failed with status ${response.status}`);
-  } catch (err) {
-    console.warn("Proxied Filebin upload failed. Trying backup file.io...", err);
-  }
-
-  // Try 3: File.io fallback (1-time download)
-  try {
-    const file = new File([blob], safeName, { type: "application/pdf" });
+    console.log("Attempting direct upload to Litterbox (Catbox.moe)...");
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("reqtype", "fileupload");
+    formData.append("time", "72h");
+    formData.append("fileToUpload", file);
 
-    console.log("Attempting upload to file.io as final backup...");
-    const response = await fetch("https://file.io/?expires=1d", {
+    const response = await fetch("https://litterbox.catbox.moe/resources/internals/api.php", {
       method: "POST",
       body: formData
     });
 
-    if (!response.ok) throw new Error(`file.io returned status ${response.status}`);
-    
-    const json = await response.json();
-    if (json.success && json.link) {
-      console.log("Successfully uploaded to file.io (Warning: 1-time download):", json.link);
-      return json.link;
+    if (response.ok) {
+      const downloadUrl = await response.text();
+      if (downloadUrl && downloadUrl.trim().startsWith("http")) {
+        console.log("Successfully uploaded to Litterbox:", downloadUrl.trim());
+        return downloadUrl.trim();
+      }
     }
-    throw new Error("Invalid response from file.io");
+    throw new Error(`Litterbox returned status ${response.status}`);
+  } catch (err) {
+    console.warn("Direct upload to Litterbox failed. Trying direct Tmpfiles fallback...", err);
+  }
+
+  // Try 2: TmpFiles.org - Direct fallback
+  try {
+    console.log("Attempting direct upload to tmpfiles.org...");
+    const formDataTmp = new FormData();
+    formDataTmp.append("file", file);
+
+    const response = await fetch("https://tmpfiles.org/api/v1/upload", {
+      method: "POST",
+      body: formDataTmp
+    });
+
+    if (response.ok) {
+      const json = await response.json();
+      if (json.status === "success" && json.data && json.data.url) {
+        const rawUrl = json.data.url;
+        // Transform view link to raw download link!
+        const downloadUrl = rawUrl.replace("https://tmpfiles.org/", "https://tmpfiles.org/dl/");
+        console.log("Successfully uploaded to tmpfiles.org direct:", downloadUrl);
+        return downloadUrl;
+      }
+    }
+    throw new Error(`tmpfiles.org returned status ${response.status}`);
+  } catch (err) {
+    console.warn("Direct upload to tmpfiles.org failed. Trying direct Uguu.se fallback...", err);
+  }
+
+  // Try 3: Uguu.se - Direct fallback
+  try {
+    console.log("Attempting direct upload to uguu.se...");
+    const formDataUguu = new FormData();
+    formDataUguu.append("files[]", file);
+
+    const response = await fetch("https://uguu.se/api.php?d=upload-tool", {
+      method: "POST",
+      body: formDataUguu
+    });
+
+    if (response.ok) {
+      const json = await response.json();
+      if (json.success && json.files && json.files[0] && json.files[0].url) {
+        const downloadUrl = json.files[0].url;
+        console.log("Successfully uploaded to Uguu.se direct:", downloadUrl);
+        return downloadUrl;
+      }
+    }
+    throw new Error(`uguu.se returned status ${response.status}`);
   } catch (err) {
     console.error("All upload targets failed completely.", err);
-    throw new Error("Semua storan awan gagal. Sila cuba lagi.");
+    throw new Error("Gagal memuat naik fail ke awan. Sila cuba lagi.");
   }
 }
 
