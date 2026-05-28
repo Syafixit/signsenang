@@ -52,7 +52,55 @@ document.addEventListener("DOMContentLoaded", async () => {
   const clearSigBtn = document.getElementById("clear-signature-btn");
   const saveSigBtn = document.getElementById("save-signature-btn");
 
-  // --- Step 1: Parse Parameters & Initialize Download (Dual-Path) ---
+  // --- Step 1: Bind Manual Upload Buttons & Triggers ---
+  const customerUploadBtn = document.getElementById("customer-upload-btn");
+  const customerFileInput = document.getElementById("customer-file-input");
+
+  if (customerUploadBtn && customerFileInput) {
+    customerUploadBtn.addEventListener("click", () => customerFileInput.click());
+    customerFileInput.addEventListener("change", (e) => {
+      if (e.target.files.length > 0) {
+        processManualUploadedFile(e.target.files[0]);
+      }
+    });
+  }
+
+  async function processManualUploadedFile(file) {
+    try {
+      loadingPanel.style.display = "block";
+      workspacePanel.style.display = "none";
+      successPanel.style.display = "none";
+
+      loadingStatus.textContent = "Membaca fail PDF secara lokal...";
+
+      const reader = new FileReader();
+      reader.onload = async () => {
+        try {
+          decryptedPdfBytes = reader.result;
+          
+          loadingStatus.textContent = "Menyediakan ruang tandatangan...";
+          await initPdfWorkspace();
+          
+          loadingPanel.style.display = "none";
+          workspacePanel.style.display = "block";
+        } catch (err) {
+          console.error("Gagal memproses fail manual:", err);
+          alert("Gagal membaca fail PDF: " + err.message);
+          window.location.reload();
+        }
+      };
+      reader.onerror = () => {
+        alert("Gagal membaca fail PDF.");
+        window.location.reload();
+      };
+      reader.readAsArrayBuffer(file);
+    } catch (e) {
+      console.error(e);
+      alert("Gagal memproses fail.");
+    }
+  }
+
+  // --- Step 2: Parse Parameters & Initialize Download (Dual-Path) ---
 
   try {
     const urlParams = new URLSearchParams(window.location.search);
@@ -69,21 +117,37 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       decryptedPdfBytes = base64ToArrayBuffer(base64);
       
+      // Initialize PDF.js and PDF-Lib workspace
+      loadingStatus.textContent = "Menyediakan ruang tandatangan...";
+      await initPdfWorkspace();
+
+      loadingPanel.style.display = "none";
+      workspacePanel.style.display = "block";
+
     } else if (fileUrl) {
       loadingStatus.textContent = "Menyambung ke storan awan untuk memuat turun PDF...";
       const rawPdfData = await downloadCloudPackage(fileUrl);
       decryptedPdfBytes = rawPdfData;
       
+      // Initialize PDF.js and PDF-Lib workspace
+      loadingStatus.textContent = "Menyediakan ruang tandatangan...";
+      await initPdfWorkspace();
+
+      loadingPanel.style.display = "none";
+      workspacePanel.style.display = "block";
+
     } else {
-      throw new Error("Link tandatangan tidak sah. Tiada dokumen yang dinyatakan.");
+      // Direct open without arguments - show manual upload prompt immediately instead of error
+      loadingStatus.textContent = "Sila muat naik fail PDF Cuckoo untuk mula menandatangani.";
+      const spinner = loadingPanel.querySelector(".spinner");
+      if (spinner) spinner.style.display = "none";
+      
+      const statusText = document.getElementById("loading-status");
+      if (statusText) statusText.textContent = "Sila klik butang di bawah untuk memilih fail PDF yang telah diisi oleh ejen.";
+      
+      const mainHeader = loadingPanel.querySelector("h2");
+      if (mainHeader) mainHeader.textContent = "Muat Naik Fail PDF Cuckoo";
     }
-
-    // Initialize PDF.js and PDF-Lib workspace
-    loadingStatus.textContent = "Menyediakan ruang tandatangan...";
-    await initPdfWorkspace();
-
-    loadingPanel.style.display = "none";
-    workspacePanel.style.display = "block";
 
   } catch (error) {
     console.error("Initialization failure:", error);
@@ -92,9 +156,32 @@ document.addEventListener("DOMContentLoaded", async () => {
         <i class="fa-solid fa-triangle-exclamation"></i>
       </div>
       <h2 style="color: var(--danger); margin-bottom: 1rem;">Gagal Membuka Fail</h2>
-      <p class="subtitle" style="margin-bottom: 2rem;">${error.message || "Sila pastikan fail anda adalah lengkap dan sah."}</p>
+      <p class="subtitle" style="margin-bottom: 1.5rem;">${error.message || "Sila pastikan fail anda adalah lengkap dan sah."}</p>
+      
+      <!-- Manual upload fallback option on error -->
+      <div style="background: rgba(220,38,38,0.02); border: 1px dashed rgba(220,38,38,0.15); border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem; display: flex; flex-direction: column; align-items: center; gap: 0.75rem; width: 100%; max-width: 450px; margin-left: auto; margin-right: auto;">
+        <p class="subtitle" style="margin-bottom: 0.25rem; font-size: 0.85rem; font-weight: bold; color: var(--text-primary);">Pilihan Alternatif Offline:</p>
+        <p class="subtitle" style="margin-bottom: 0.5rem; font-size: 0.8rem; text-align: center;">Dapatkan fail PDF daripada ejen anda melalui WhatsApp, muat naik di bawah untuk tandatangan secara offline:</p>
+        <input type="file" id="customer-file-input-error" accept="application/pdf" style="display: none;">
+        <button class="btn btn-primary" id="customer-upload-btn-error" style="padding: 0.7rem 1.5rem; font-size: 0.9rem;">
+          <i class="fa-solid fa-cloud-arrow-up"></i> Muat Naik PDF Manual
+        </button>
+      </div>
+
       <a href="index.html" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Kembali Ke Laman Utama</a>
     `;
+
+    // Bind upload triggers on the error screen
+    const uploadBtnError = document.getElementById("customer-upload-btn-error");
+    const fileInputError = document.getElementById("customer-file-input-error");
+    if (uploadBtnError && fileInputError) {
+      uploadBtnError.addEventListener("click", () => fileInputError.click());
+      fileInputError.addEventListener("change", (e) => {
+        if (e.target.files.length > 0) {
+          processManualUploadedFile(e.target.files[0]);
+        }
+      });
+    }
   }
 
   // --- Helper: Base64 to ArrayBuffer ---

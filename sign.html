@@ -34,8 +34,18 @@
       <h2 style="margin-bottom: 1rem; color: var(--text-primary);">Membuka Dokumen...</h2>
       <p class="subtitle" id="loading-status" style="margin-bottom: 2.5rem;">Memuat turun fail daripada storan...</p>
       
-      <div style="display: flex; justify-content: center;">
+      <div style="display: flex; justify-content: center; margin-bottom: 2rem;">
         <div class="spinner" style="display: block; width: 40px; height: 40px; border-width: 4px;"></div>
+      </div>
+
+      <!-- Manual upload fallback option directly in loading panel -->
+      <div id="manual-upload-container" style="border-top: 1px solid rgba(0,0,0,0.06); padding-top: 2rem; display: flex; flex-direction: column; align-items: center; gap: 0.75rem;">
+        <p class="subtitle" style="margin-bottom: 0.25rem; font-size: 0.85rem; font-weight: bold; color: var(--text-primary);">Pilihan Alternatif Offline:</p>
+        <p class="subtitle" style="margin-bottom: 0.5rem; font-size: 0.8rem; max-width: 450px;">Jika muat turun lambat/tersekat, dapatkan fail PDF daripada ejen anda melalui WhatsApp, dan muat naik secara manual di bawah:</p>
+        <input type="file" id="customer-file-input" accept="application/pdf" style="display: none;">
+        <button class="btn btn-primary" id="customer-upload-btn" style="padding: 0.7rem 1.5rem; font-size: 0.9rem;">
+          <i class="fa-solid fa-cloud-arrow-up"></i> Muat Naik PDF Manual
+        </button>
       </div>
     </div>
 
