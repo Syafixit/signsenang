@@ -1065,15 +1065,15 @@ footer a:hover {
   sleek thin card borders, spacious document views, and finger-friendly controls.
 */
 @media (max-width: 1024px) {
-  /* Make the app take full viewport height and width, hiding headers */
-  body {
+  /* Make the app take full viewport height and width only when editor or customer portal is active */
+  body.editor-active, body.customer-active {
     overflow: hidden !important;
     height: 100vh !important;
     margin: 0 !important;
     padding: 0 !important;
   }
   
-  .app-container {
+  body.editor-active .app-container, body.customer-active .app-container {
     max-width: 100% !important;
     width: 100vw !important;
     height: 100vh !important;
@@ -1081,11 +1081,11 @@ footer a:hover {
     margin: 0 !important;
   }
 
-  header {
-    display: none !important; /* Hide massive brand header on mobile in editor/sign mode */
+  body.editor-active header, body.customer-active header {
+    display: none !important; /* Hide brand header only when active */
   }
 
-  .glass-panel {
+  body.editor-active .glass-panel, body.customer-active .glass-panel {
     border-radius: 0 !important;
     border: none !important;
     box-shadow: none !important;
@@ -1097,7 +1097,7 @@ footer a:hover {
   }
 
   /* Make sure editor section is full height */
-  #editor-section {
+  body.editor-active #editor-section {
     display: flex !important;
     flex-direction: column !important;
     height: 100vh !important;
@@ -1107,7 +1107,7 @@ footer a:hover {
   }
 
   /* Top Bar Header Layout */
-  #editor-section > div:first-of-type {
+  body.editor-active #editor-section > div:first-of-type {
     position: fixed;
     top: 0;
     left: 0;
@@ -1125,18 +1125,18 @@ footer a:hover {
     border-radius: 0 !important;
   }
 
-  #editor-section > div:first-of-type h2 {
+  body.editor-active #editor-section > div:first-of-type h2 {
     font-size: 1.05rem !important;
     font-weight: 800 !important;
     color: var(--primary) !important;
   }
 
-  #editor-section > div:first-of-type span {
+  body.editor-active #editor-section > div:first-of-type span {
     display: none !important; /* Hide file name on top bar to save space */
   }
 
   /* Fixed Bottom Bar Toolbar */
-  .editor-toolbox {
+  body.editor-active .editor-toolbox {
     position: fixed;
     bottom: 0;
     left: 0;
@@ -1155,11 +1155,11 @@ footer a:hover {
     box-shadow: 0 -2px 10px rgba(0,0,0,0.04) !important;
   }
 
-  .editor-toolbox div {
+  body.editor-active .editor-toolbox div {
     display: none !important; /* Hide divider line in mobile toolbox */
   }
 
-  .toolbox-btn {
+  body.editor-active .toolbox-btn {
     font-size: 0.75rem !important;
     padding: 0.4rem 0.5rem !important;
     flex-direction: column !important;
@@ -1172,12 +1172,12 @@ footer a:hover {
     box-shadow: none !important;
   }
 
-  .toolbox-btn i {
+  body.editor-active .toolbox-btn i {
     font-size: 1.2rem !important;
   }
 
   /* Compact controls inside editor-toolbox for mobile */
-  .editor-toolbox button:not(.toolbox-btn) {
+  body.editor-active .editor-toolbox button:not(.toolbox-btn) {
     background: transparent !important;
     border: none !important;
     color: var(--text-secondary) !important;
@@ -1191,11 +1191,11 @@ footer a:hover {
     box-shadow: none !important;
   }
 
-  .editor-toolbox button:not(.toolbox-btn):hover {
+  body.editor-active .editor-toolbox button:not(.toolbox-btn):hover {
     color: var(--primary) !important;
   }
 
-  .editor-toolbox .pdf-page-indicator {
+  body.editor-active .editor-toolbox .pdf-page-indicator {
     font-size: 0.75rem !important;
     min-width: unset !important;
     text-align: center !important;
@@ -1204,7 +1204,7 @@ footer a:hover {
   }
 
   /* Viewport fill middle */
-  .pdf-viewer-container {
+  body.editor-active .pdf-viewer-container {
     position: absolute;
     top: 55px;
     bottom: 65px;
@@ -1216,7 +1216,7 @@ footer a:hover {
     height: auto !important;
   }
 
-  .pdf-viewport-scrollable {
+  body.editor-active .pdf-viewport-scrollable {
     height: 100% !important;
     max-height: 100% !important;
     border-radius: 0 !important;
@@ -1225,7 +1225,7 @@ footer a:hover {
   }
 
   /* Floating Top Bar for main actions on mobile */
-  #editor-section > div:last-of-type {
+  body.editor-active #editor-section > div:last-of-type {
     position: fixed;
     top: 10px;
     right: 10px;
@@ -1239,7 +1239,7 @@ footer a:hover {
     width: auto !important;
   }
 
-  #editor-section > div:last-of-type #editor-download-pdf-btn {
+  body.editor-active #editor-section > div:last-of-type #editor-download-pdf-btn {
     background: #10b981 !important;
     color: white !important;
     border: none !important;
@@ -1250,11 +1250,11 @@ footer a:hover {
     box-shadow: 0 2px 5px rgba(16,185,129,0.2) !important;
   }
 
-  #editor-section > div:last-of-type #editor-download-pdf-btn i {
+  body.editor-active #editor-section > div:last-of-type #editor-download-pdf-btn i {
     font-size: 0.85rem !important;
   }
 
-  #editor-section > div:last-of-type #generate-filled-pdf-btn {
+  body.editor-active #editor-section > div:last-of-type #generate-filled-pdf-btn {
     font-size: 0.8rem !important;
     padding: 0.4rem 0.75rem !important;
     border-radius: 6px !important;
@@ -1264,7 +1264,7 @@ footer a:hover {
   }
 
   /* Customer portal workspace overrides */
-  #workspace-panel {
+  body.customer-active #workspace-panel {
     display: flex !important;
     flex-direction: column !important;
     height: 100vh !important;
@@ -1274,7 +1274,7 @@ footer a:hover {
   }
 
   /* Customer Instruction at top */
-  #workspace-panel .instruction-card {
+  body.customer-active #workspace-panel .instruction-card {
     position: fixed;
     top: 0;
     left: 0;
@@ -1290,16 +1290,16 @@ footer a:hover {
     border-radius: 0 !important;
   }
 
-  #workspace-panel .instruction-icon {
+  body.customer-active #workspace-panel .instruction-icon {
     font-size: 1.1rem !important;
   }
 
-  #workspace-panel .instruction-text {
+  body.customer-active #workspace-panel .instruction-text {
     font-size: 0.75rem !important;
   }
 
   /* Customer PDF Viewport in middle */
-  #workspace-panel .pdf-viewer-container {
+  body.customer-active #workspace-panel .pdf-viewer-container {
     position: absolute;
     top: 50px;
     bottom: 125px; /* Leave space for bottom buttons */
@@ -1311,7 +1311,7 @@ footer a:hover {
     height: auto !important;
   }
 
-  #workspace-panel .pdf-viewport-scrollable {
+  body.customer-active #workspace-panel .pdf-viewport-scrollable {
     height: 100% !important;
     max-height: 100% !important;
     border-radius: 0 !important;
@@ -1320,7 +1320,7 @@ footer a:hover {
   }
 
   /* Fixed Bottom Bar controls */
-  #workspace-panel .pdf-controls {
+  body.customer-active #workspace-panel .pdf-controls {
     position: fixed;
     bottom: 55px; /* Above the Sahkan button */
     left: 0;
@@ -1338,7 +1338,7 @@ footer a:hover {
   }
 
   /* Bottom confirm action button */
-  #workspace-panel div:last-of-type {
+  body.customer-active #workspace-panel div:last-of-type {
     position: fixed;
     bottom: 0;
     left: 0;
@@ -1354,7 +1354,7 @@ footer a:hover {
     border-top: 1px solid #e2e8f0;
   }
 
-  #workspace-panel #download-signed-pdf-btn {
+  body.customer-active #workspace-panel #download-signed-pdf-btn {
     width: 100% !important;
     max-width: 100% !important;
     height: 42px !important;
@@ -1364,11 +1364,11 @@ footer a:hover {
     border-radius: 6px !important;
   }
 
-  #workspace-panel div:last-of-type p {
+  body.customer-active #workspace-panel div:last-of-type p {
     display: none !important; /* Hide tiny note to save space */
   }
 
-  /* Font size controls and badges */
+  /* Standard components display properly on non-active screens */
   .brand-name {
     font-size: 1.5rem;
   }

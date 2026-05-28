@@ -108,9 +108,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const pdfBytesCopy = originalPdfBytes.slice(0);
       pdfjsDocInstance = await pdfjsLib.getDocument({ data: pdfBytesCopy }).promise;
       
-      // Display Editor, Hide Upload
+      // Display Editor, Hide Upload & Activate Mobile Viewport state
       uploadSection.style.display = "none";
       editorSection.style.display = "block";
+      document.body.classList.add("editor-active");
       
       currentPageIndex = 0;
       zoomLevel = 1.0;
@@ -994,9 +995,12 @@ document.addEventListener("DOMContentLoaded", () => {
     
     clearEditorOverlays();
     
-    shareSection.style.display = "none";
+     shareSection.style.display = "none";
     progressSection.style.display = "none";
     editorSection.style.display = "none";
+    
+    // Deactivate Mobile Viewport state
+    document.body.classList.remove("editor-active");
     
     uploadSection.style.display = "block";
     dropzone.style.display = "block";

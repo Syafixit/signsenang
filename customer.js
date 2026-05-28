@@ -91,6 +91,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           
           loadingPanel.style.display = "none";
           workspacePanel.style.display = "block";
+          document.body.classList.add("customer-active");
           
           // Auto-trigger customer signature canvas modal immediately
           openSignatureModal();
@@ -134,6 +135,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       loadingPanel.style.display = "none";
       workspacePanel.style.display = "block";
+      document.body.classList.add("customer-active");
       
       // Auto-trigger customer signature canvas modal immediately
       openSignatureModal();
@@ -149,6 +151,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       loadingPanel.style.display = "none";
       workspacePanel.style.display = "block";
+      document.body.classList.add("customer-active");
       
       // Auto-trigger customer signature canvas modal immediately
       openSignatureModal();
@@ -618,6 +621,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       workspacePanel.style.display = "none";
       successPanel.style.display = "block";
+      document.body.classList.remove("customer-active");
 
     } catch (saveError) {
       console.error("PDF generation failure:", saveError);
