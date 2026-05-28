@@ -259,37 +259,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Setup modal elements
     initSignatureModal();
 
-    // PDF Canvas Click Listener for Tap-to-Place signature coordinates
+    // PDF Canvas Click Listener - clicking on the canvas unselects the signature overlay
     pdfCanvas.addEventListener("click", (e) => {
-      if (!signatureData) return;
-      e.stopPropagation();
-
-      const rect = pdfCanvas.getBoundingClientRect();
-      const clickX = e.clientX - rect.left;
-      const clickY = e.clientY - rect.top;
-
-      // Current width and height in pixels
-      const w = signaturePosition.wPercent * pdfCanvas.width;
-      const h = signaturePosition.hPercent * pdfCanvas.height;
-
-      // Center the signature block at the click position
-      let newLeft = clickX - (w / 2);
-      let newTop = clickY - (h / 2);
-
-      // Clamp coordinates to remain within canvas boundaries
-      const maxLeft = pdfCanvas.width - w;
-      const maxTop = pdfCanvas.height - h;
-
-      newLeft = Math.max(0, Math.min(newLeft, maxLeft));
-      newTop = Math.max(0, Math.min(newTop, maxTop));
-
-      // Save percentage values relative to the canvas
-      signaturePosition.xPercent = newLeft / pdfCanvas.width;
-      signaturePosition.yPercent = newTop / pdfCanvas.height;
-      signaturePosition.pageIndex = currentPageIndex;
-
-      // Re-create the overlay at the new coordinates instantly!
-      createDraggableSignatureOverlay();
+      const overlay = document.getElementById("sig-overlay");
+      if (overlay) {
+        overlay.classList.remove("editing");
+      }
     });
 
     await renderPage(currentPageIndex);
@@ -362,9 +337,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     sigCanvas.width = 460;
     sigCanvas.height = 220;
 
-    // Premium fine black ink ballpoint pen stroke settings
+    // Premium fine black ink ballpoint pen stroke settings with guaranteed alpha channel transparency
     signaturePad = new SignaturePad(sigCanvas, {
-      backgroundColor: "rgba(255, 255, 255, 0)",
+      backgroundColor: "rgba(0, 0, 0, 0)",
       penColor: "rgb(0, 0, 0)", 
       minWidth: 0.8, 
       maxWidth: 2.2, 
@@ -651,16 +626,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       const pages = pdfDoc.getPages();
       const targetPage = pages[signaturePosition.pageIndex];
-      const pdfWidthPoints = targetPage.getWidth();
-      const pdfHeightPoints = targetPage.getHeight();
-
-      // Convert percentages directly back to fixed absolute PDF points
-      // This bypasses any client zoom factor completely and is 100% accurate!
-      const pdfX = signaturePosition.xPercent * pdfWidthPoints;
-      const pdfY = pdfHeightPoints - (signaturePosition.yPercent * pdfHeightPoints) - (signaturePosition.hPercent * pdfHeightPoints * 0.68);
       
-      const pdfWidth = signaturePosition.wPercent * pdfWidthPoints;
-      const pdfHeight = signaturePosition.hPercent * pdfHeightPoints;
+      // Get the bounding box of the page (handles non-zero origins from bank statements, etc.)
+      const cropBox = targetPage.getCropBox() || targetPage.getMediaBox();
+      const originX = cropBox.x || 0;
+      const originY = cropBox.y || 0;
+      const pageW = cropBox.width || targetPage.getWidth();
+      const pageH = cropBox.height || targetPage.getHeight();
+
+      // Convert percentages directly back to fixed absolute PDF points relative to the cropBox/mediaBox origin
+      const pdfX = originX + (signaturePosition.xPercent * pageW);
+      const pdfWidth = signaturePosition.wPercent * pageW;
+      const pdfHeight = signaturePosition.hPercent * pageH;
+      const pdfY = originY + pageH - (signaturePosition.yPercent * pageH) - pdfHeight;
 
       const signatureEmbeddedImage = await pdfDoc.embedPng(signatureData);
 

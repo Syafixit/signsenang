@@ -818,18 +818,21 @@ document.addEventListener("DOMContentLoaded", () => {
       const page = pages[ann.pageIndex];
       if (!page) continue;
       
-      const pdfWidthPoints = page.getWidth();
-      const pdfHeightPoints = page.getHeight();
+      const cropBox = page.getCropBox() || page.getMediaBox();
+      const originX = cropBox.x || 0;
+      const originY = cropBox.y || 0;
+      const pageW = cropBox.width || page.getWidth();
+      const pageH = cropBox.height || page.getHeight();
       
-      const scaleFactor = pdfWidthPoints / canvasWidth;
+      const scaleFactor = pageW / canvasWidth;
 
-      // Position of the overlay box relative to page width and height
-      const pdfX = ann.xPercent * pdfWidthPoints;
-      const boxTop = pdfHeightPoints - (ann.yPercent * pdfHeightPoints);
+      // Position of the overlay box relative to page width and height, accounting for non-zero origin
+      const pdfX = originX + (ann.xPercent * pageW);
+      const boxTop = originY + pageH - (ann.yPercent * pageH);
 
       if (ann.type === "text") {
         // Height of the text overlay in DOM
-        const overlayHeight = (ann.hPercent || 0) * pdfHeightPoints;
+        const overlayHeight = (ann.hPercent || 0) * pageH;
         const textFontSizePoints = (ann.fontSize || 12) * scaleFactor;
         
         // Center text vertically inside the outer box (taking font baseline into account)
@@ -846,7 +849,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       } else if (ann.type === "tick") {
         // Height of the tick overlay in DOM
-        const overlayHeight = (ann.hPercent || 0) * pdfHeightPoints;
+        const overlayHeight = (ann.hPercent || 0) * pageH;
         const size = (ann.fontSize || 10) * scaleFactor;
         const thickness = Math.max(1.5, size * 0.18);
         

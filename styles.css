@@ -1388,24 +1388,25 @@ footer a:hover {
     height: 100dvh !important;
     position: relative;
     padding: 0 !important;
-    justify-content: space-between;
+    margin: 0 !important;
+    justify-content: space-between !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
   }
 
-  /* Customer Instruction at top */
+  /* Customer Instruction at top - STATIC FLOW */
   body.customer-active #workspace-panel .instruction-card {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 50px;
-    background: #ffffff;
-    border-bottom: 1px solid #e2e8f0;
+    position: static !important;
+    height: auto !important;
+    background: #ffffff !important;
+    border-bottom: 1px solid #e2e8f0 !important;
     padding: 0.5rem 1rem !important;
     margin: 0 !important;
     display: flex !important;
     align-items: center !important;
     z-index: 200;
     border-radius: 0 !important;
+    flex-shrink: 0 !important;
   }
 
   body.customer-active #workspace-panel .instruction-icon {
@@ -1416,36 +1417,36 @@ footer a:hover {
     font-size: 0.75rem !important;
   }
 
-  /* Customer PDF Viewport in middle */
+  /* Customer PDF Viewport in middle - STATIC FLEX FLOW */
   body.customer-active #workspace-panel .pdf-viewer-container {
-    position: absolute;
-    top: 50px;
-    bottom: 115px; /* Leave space for bottom buttons */
-    left: 0;
-    right: 0;
+    position: relative !important;
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    height: auto !important;
+    overflow: hidden !important;
     margin: 0 !important;
     padding: 0 !important;
     width: 100% !important;
-    height: auto !important;
   }
 
   body.customer-active #workspace-panel .pdf-viewport-scrollable {
-    height: 100% !important;
-    max-height: 100% !important;
+    flex: 1 !important;
+    height: auto !important;
+    max-height: none !important;
+    width: 100% !important;
     border-radius: 0 !important;
     border: none !important;
     padding: 0.5rem !important;
+    overflow: auto !important;
   }
 
-  /* Fixed Bottom Bar controls */
+  /* Controls below scrollable area - STATIC FLOW */
   body.customer-active #workspace-panel .pdf-controls {
-    position: fixed;
-    bottom: 55px; /* Above the Sahkan button */
-    left: 0;
-    right: 0;
-    height: 60px;
-    background: #ffffff;
-    border-top: 1px solid #e2e8f0;
+    position: static !important;
+    height: 60px !important;
+    background: #ffffff !important;
+    border-top: 1px solid #e2e8f0 !important;
     margin: 0 !important;
     border-radius: 0 !important;
     padding: 0.25rem 0.5rem !important;
@@ -1453,6 +1454,7 @@ footer a:hover {
     justify-content: space-around !important;
     align-items: center !important;
     z-index: 200;
+    flex-shrink: 0 !important;
   }
 
   body.customer-active .tap-to-sign-prompt {
@@ -1470,21 +1472,19 @@ footer a:hover {
     font-size: 0.75rem !important;
   }
 
-  /* Bottom confirm action button */
+  /* Bottom confirm action button - STATIC FLOW */
   body.customer-active #workspace-panel div:last-of-type {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 55px;
-    background: #ffffff;
+    position: static !important;
+    height: 55px !important;
+    background: #ffffff !important;
     margin: 0 !important;
     padding: 0.4rem 0.75rem !important;
     z-index: 200;
     display: flex !important;
-    align-items: center;
-    justify-content: center;
-    border-top: 1px solid #e2e8f0;
+    align-items: center !important;
+    justify-content: center !important;
+    border-top: 1px solid #e2e8f0 !important;
+    flex-shrink: 0 !important;
   }
 
   body.customer-active #workspace-panel #download-signed-pdf-btn {
