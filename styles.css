@@ -530,6 +530,15 @@ header {
   margin: 0 auto; /* horizontal center fallback */
 }
 
+/* Force PDF canvases to stretch exactly to their positioned wrapper wrappers to prevent height distortion */
+#pdf-canvas, #editor-pdf-canvas {
+  display: block !important;
+  max-width: none !important;
+  max-height: none !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
 /* Drag-Resize Signature Overlay Box */
 .sig-draggable-overlay {
   position: absolute;

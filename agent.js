@@ -221,15 +221,21 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    // Document click listener to close editing state when clicking blank areas
+    // Document click listener to close editing state safely when clicking blank areas
     document.addEventListener("mousedown", (e) => {
-      if (!e.target.closest(".editor-active-overlay")) {
-        blurAllActiveOverlays();
+      const target = e.target;
+      if (target && typeof target.closest === "function") {
+        if (!target.closest(".editor-active-overlay")) {
+          blurAllActiveOverlays();
+        }
       }
     });
     document.addEventListener("touchstart", (e) => {
-      if (!e.target.closest(".editor-active-overlay")) {
-        blurAllActiveOverlays();
+      const target = e.target;
+      if (target && typeof target.closest === "function") {
+        if (!target.closest(".editor-active-overlay")) {
+          blurAllActiveOverlays();
+        }
       }
     });
 

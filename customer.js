@@ -65,17 +65,23 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // Global click/tap outside handler to unselect signature
+  // Global click/tap outside handler to safely unselect signature
   document.addEventListener("mousedown", (e) => {
-    if (!e.target.closest("#sig-overlay") && !e.target.closest("#open-sign-modal-btn")) {
-      const overlay = document.getElementById("sig-overlay");
-      if (overlay) overlay.classList.remove("editing");
+    const target = e.target;
+    if (target && typeof target.closest === "function") {
+      if (!target.closest("#sig-overlay") && !target.closest("#open-sign-modal-btn")) {
+        const overlay = document.getElementById("sig-overlay");
+        if (overlay) overlay.classList.remove("editing");
+      }
     }
   });
   document.addEventListener("touchstart", (e) => {
-    if (!e.target.closest("#sig-overlay") && !e.target.closest("#open-sign-modal-btn")) {
-      const overlay = document.getElementById("sig-overlay");
-      if (overlay) overlay.classList.remove("editing");
+    const target = e.target;
+    if (target && typeof target.closest === "function") {
+      if (!target.closest("#sig-overlay") && !target.closest("#open-sign-modal-btn")) {
+        const overlay = document.getElementById("sig-overlay");
+        if (overlay) overlay.classList.remove("editing");
+      }
     }
   });
 
@@ -431,9 +437,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       e.stopPropagation();
       overlay.classList.add("editing");
     });
+    
+    // Combined touchstart listener with passive: false to ensure editing selection and drag start both execute cleanly
     overlay.addEventListener("touchstart", (e) => {
       overlay.classList.add("editing");
-    }, { passive: true });
+      onDragStart(e);
+    }, { passive: false });
     
     const img = document.createElement("img");
     img.src = signatureData;
@@ -462,7 +471,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     pdfWrapper.appendChild(overlay);
 
     overlay.addEventListener("mousedown", onDragStart);
-    overlay.addEventListener("touchstart", onDragStart, { passive: false });
 
     resizeHandle.addEventListener("mousedown", onResizeStart);
     resizeHandle.addEventListener("touchstart", onResizeStart, { passive: false });
