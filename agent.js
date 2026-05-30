@@ -271,8 +271,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const page = await pdfjsDocInstance.getPage(index + 1);
     
     // Fit canvas width nicely in editor wrapper, scaled by zoomLevel from constrained container
-    const viewerContainer = document.querySelector("#editor-section .pdf-viewer-container") || editorPdfWrapper.parentElement;
-    const containerWidth = (viewerContainer.clientWidth || window.innerWidth) - 30;
+    // On mobile screens <= 1024px, force containerWidth to window.innerWidth to completely bypass any clientWidth flexbox bugs!
+    const isMobile = window.innerWidth <= 1024;
+    const containerWidth = isMobile ? (window.innerWidth - 20) : ((document.querySelector("#editor-section .pdf-viewer-container")?.clientWidth || 750) - 30);
     const originalViewport = page.getViewport({ scale: 1.0 });
     
     const baseScale = containerWidth / originalViewport.width;

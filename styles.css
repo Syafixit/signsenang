@@ -1390,23 +1390,25 @@ footer a:hover {
     box-shadow: 0 2px 5px rgba(220,38,38,0.2) !important;
   }
 
-  /* Customer portal workspace overrides */
+  /* Customer portal workspace overrides - identical to editor-active absolute positioning for total stability */
   body.customer-active #workspace-panel {
-    display: flex !important;
-    flex-direction: column !important;
+    display: block !important;
     height: 100dvh !important;
-    position: relative;
+    position: relative !important;
     padding: 0 !important;
     margin: 0 !important;
-    justify-content: space-between !important;
+    overflow: hidden !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
   }
 
-  /* Customer Instruction at top - STATIC FLOW */
+  /* Customer Instruction at top - FIXED BAR */
   body.customer-active #workspace-panel .instruction-card {
-    position: static !important;
-    height: auto !important;
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
     background: #ffffff !important;
     border-bottom: 1px solid #e2e8f0 !important;
     padding: 0.5rem 1rem !important;
@@ -1415,7 +1417,6 @@ footer a:hover {
     align-items: center !important;
     z-index: 200;
     border-radius: 0 !important;
-    flex-shrink: 0 !important;
   }
 
   body.customer-active #workspace-panel .instruction-icon {
@@ -1426,36 +1427,39 @@ footer a:hover {
     font-size: 0.75rem !important;
   }
 
-  /* Customer PDF Viewport in middle - STATIC FLEX FLOW */
+  /* Customer PDF Viewport in middle - ABSOLUTE BOUNDARIES (immune to sizing bugs) */
   body.customer-active #workspace-panel .pdf-viewer-container {
-    position: relative !important;
-    flex: 1 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: stretch !important;
-    justify-content: flex-start !important;
-    height: auto !important;
-    overflow: hidden !important;
+    position: absolute !important;
+    top: 50px;
+    bottom: 115px; /* Leave space for double bottom bar (60px controls + 55px button) */
+    left: 0;
+    right: 0;
     margin: 0 !important;
     padding: 0 !important;
     width: 100% !important;
+    height: auto !important;
+    overflow: hidden !important;
+    display: block !important;
   }
 
   body.customer-active #workspace-panel .pdf-viewport-scrollable {
-    flex: 1 !important;
-    height: auto !important;
-    max-height: none !important;
+    height: 100% !important;
+    max-height: 100% !important;
     width: 100% !important;
     border-radius: 0 !important;
     border: none !important;
     padding: 0.5rem !important;
     overflow: auto !important;
+    display: block !important;
   }
 
-  /* Controls below scrollable area - STATIC FLOW */
+  /* Fixed Bottom Bar controls - FIXED POSITION */
   body.customer-active #workspace-panel .pdf-controls {
-    position: static !important;
-    height: 60px !important;
+    position: fixed !important;
+    bottom: 55px; /* Above the Sahkan button bar */
+    left: 0;
+    right: 0;
+    height: 60px;
     background: #ffffff !important;
     border-top: 1px solid #e2e8f0 !important;
     margin: 0 !important;
@@ -1465,7 +1469,6 @@ footer a:hover {
     justify-content: space-around !important;
     align-items: center !important;
     z-index: 200;
-    flex-shrink: 0 !important;
   }
 
   body.customer-active .tap-to-sign-prompt {
@@ -1483,10 +1486,13 @@ footer a:hover {
     font-size: 0.75rem !important;
   }
 
-  /* Bottom confirm action button - STATIC FLOW */
+  /* Bottom confirm action button - FIXED POSITION */
   body.customer-active #workspace-panel div:last-of-type {
-    position: static !important;
-    height: 55px !important;
+    position: fixed !important;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 55px;
     background: #ffffff !important;
     margin: 0 !important;
     padding: 0.4rem 0.75rem !important;
@@ -1495,7 +1501,6 @@ footer a:hover {
     align-items: center !important;
     justify-content: center !important;
     border-top: 1px solid #e2e8f0 !important;
-    flex-shrink: 0 !important;
   }
 
   body.customer-active #workspace-panel #download-signed-pdf-btn {

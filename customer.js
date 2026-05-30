@@ -291,9 +291,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Fetch page
     const page = await pdfjsDocInstance.getPage(index + 1);
     
-    // Determine dynamic responsive viewport scaling from the constrained viewer container
-    const viewerContainer = document.querySelector("#workspace-panel .pdf-viewer-container") || pdfWrapper.parentElement;
-    const containerWidth = viewerContainer.clientWidth || window.innerWidth;
+    // Determine dynamic responsive viewport scaling
+    // On mobile screens <= 1024px, force containerWidth to window.innerWidth to completely bypass any clientWidth flexbox bugs!
+    const isMobile = window.innerWidth <= 1024;
+    const containerWidth = isMobile ? window.innerWidth : (document.querySelector("#workspace-panel .pdf-viewer-container")?.clientWidth || 750);
     const originalViewport = page.getViewport({ scale: 1.0 });
     
     // Base fit scale * user zoom factor
