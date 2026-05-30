@@ -1,5 +1,5 @@
 /* 
-  Cuckoo EasySign - Agent Portal Controller (Advanced Board Fill & Share)
+  SignSenang - Agent Portal Controller (Advanced Board Fill & Share)
   Orchestrates PDF form filling (Text and Tick drawings), PDF-Lib binary compiling, 
   resilient cloud uploads, QR Codes, and instant Local-Offline signing.
 */

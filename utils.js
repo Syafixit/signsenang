@@ -1,5 +1,5 @@
 /* 
-  Cuckoo EasySign - Utility Library (Simplified, Resilient & Proxied)
+  SignSenang - Utility Library (Simplified, Resilient & Proxied)
   Manages raw document uploading and highly resilient download/upload retrieval via multi-proxy routing.
 */
 

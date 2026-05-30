@@ -1,5 +1,5 @@
 /* 
-  Cuckoo EasySign - Premium Red & White Corporate Style System
+  SignSenang - Premium Red & White Corporate Style System
   Designed with Cuckoo's iconic crimson red and crisp white layout, featuring clean card panels, soft shadows, and smooth micro-animations.
 */
 
@@ -557,8 +557,8 @@ header {
 
 .sig-draggable-overlay.editing {
   border: 1.5px dashed var(--primary) !important;
-  background: rgba(255, 255, 255, 0.45) !important;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08) !important;
+  background: rgba(220, 38, 38, 0.04) !important;
+  box-shadow: 0 4px 10px rgba(220,38,38,0.1) !important;
 }
 
 /* Hide controls by default when unselected */
@@ -1402,36 +1402,78 @@ footer a:hover {
     -webkit-backdrop-filter: none !important;
   }
 
-  /* Customer Instruction at top - FIXED BAR */
+  /* Hide instruction card completely on mobile to give 100% full height to the PDF canvas */
   body.customer-active #workspace-panel .instruction-card {
+    display: none !important;
+  }
+
+  /* Fixed Top Header bar on Mobile */
+  body.customer-active #workspace-panel .customer-header-bar {
     position: fixed !important;
     top: 0;
     left: 0;
     right: 0;
-    height: 50px;
+    height: 55px;
     background: #ffffff !important;
     border-bottom: 1px solid #e2e8f0 !important;
     padding: 0.5rem 1rem !important;
     margin: 0 !important;
     display: flex !important;
+    justify-content: space-between !important;
     align-items: center !important;
     z-index: 200;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     border-radius: 0 !important;
   }
 
-  body.customer-active #workspace-panel .instruction-icon {
-    font-size: 1.1rem !important;
+  body.customer-active #workspace-panel .customer-header-bar h2 {
+    font-size: 1.05rem !important;
+    font-weight: 800 !important;
+    color: var(--primary) !important;
   }
 
-  body.customer-active #workspace-panel .instruction-text {
-    font-size: 0.75rem !important;
+  /* Float action buttons on the top right over the header */
+  body.customer-active #workspace-panel .customer-actions {
+    position: fixed !important;
+    top: 10px;
+    right: 10px;
+    display: flex !important;
+    gap: 0.5rem !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    z-index: 210;
+    width: auto !important;
   }
 
-  /* Customer PDF Viewport in middle - ABSOLUTE BOUNDARIES (immune to sizing bugs) */
+  body.customer-active #workspace-panel #open-sign-modal-btn {
+    font-size: 0.78rem !important;
+    padding: 0.4rem 0.65rem !important;
+    border-radius: 6px !important;
+    width: auto !important;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%) !important;
+    box-shadow: 0 2px 5px rgba(220,38,38,0.2) !important;
+    color: white !important;
+    border: none !important;
+  }
+
+  body.customer-active #workspace-panel #download-signed-pdf-btn {
+    font-size: 0.78rem !important;
+    padding: 0.4rem 0.65rem !important;
+    border-radius: 6px !important;
+    width: auto !important;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    box-shadow: 0 2px 5px rgba(16,185,129,0.2) !important;
+    color: white !important;
+    border: none !important;
+  }
+
+  /* Customer PDF Viewport in middle - ABSOLUTE BOUNDARIES (occupies full screen except top/bottom bars!) */
   body.customer-active #workspace-panel .pdf-viewer-container {
     position: absolute !important;
-    top: 50px;
-    bottom: 115px; /* Leave space for double bottom bar (60px controls + 55px button) */
+    top: 55px !important; /* Starts right after the top bar */
+    bottom: 60px !important; /* Leaves exactly enough space for the bottom toolbar */
     left: 0;
     right: 0;
     margin: 0 !important;
@@ -1453,13 +1495,13 @@ footer a:hover {
     display: block !important;
   }
 
-  /* Fixed Bottom Bar controls - FIXED POSITION */
+  /* Fixed Bottom Toolbar for page numbers and zoom buttons */
   body.customer-active #workspace-panel .pdf-controls {
     position: fixed !important;
-    bottom: 55px; /* Above the Sahkan button bar */
+    bottom: 0 !important; /* Aligns directly at the absolute bottom of viewport */
     left: 0;
     right: 0;
-    height: 60px;
+    height: 60px !important;
     background: #ffffff !important;
     border-top: 1px solid #e2e8f0 !important;
     margin: 0 !important;
@@ -1469,52 +1511,31 @@ footer a:hover {
     justify-content: space-around !important;
     align-items: center !important;
     z-index: 200;
-  }
-
-  body.customer-active .tap-to-sign-prompt {
-    font-size: 0.72rem !important;
-    padding: 0.4rem 0.8rem !important;
-    white-space: nowrap !important;
+    box-shadow: 0 -3px 15px rgba(0,0,0,0.05) !important;
   }
 
   body.customer-active .pdf-controls button {
     padding: 0.35rem 0.45rem !important;
     font-size: 0.75rem !important;
+    background: #f1f5f9 !important;
+    border: 1px solid #cbd5e1 !important;
+    color: var(--text-primary) !important;
+  }
+
+  body.customer-active .pdf-controls button:hover {
+    background: #fee2e2 !important;
+    color: var(--primary) !important;
   }
 
   body.customer-active .pdf-page-indicator {
     font-size: 0.75rem !important;
+    font-weight: bold !important;
+    color: var(--text-secondary) !important;
   }
 
-  /* Bottom confirm action button - FIXED POSITION */
-  body.customer-active #workspace-panel div:last-of-type {
-    position: fixed !important;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 55px;
-    background: #ffffff !important;
-    margin: 0 !important;
-    padding: 0.4rem 0.75rem !important;
-    z-index: 200;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    border-top: 1px solid #e2e8f0 !important;
-  }
-
-  body.customer-active #workspace-panel #download-signed-pdf-btn {
-    width: 100% !important;
-    max-width: 100% !important;
-    height: 42px !important;
-    font-size: 0.95rem !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    border-radius: 6px !important;
-  }
-
-  body.customer-active #workspace-panel div:last-of-type p {
-    display: none !important; /* Hide tiny note to save space */
+  /* Hide old desktop-only footer note on mobile */
+  body.customer-active #workspace-panel #desktop-note-container {
+    display: none !important;
   }
 
   /* Standard components display properly on non-active screens */

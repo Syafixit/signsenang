@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Cuckoo EasySign - Tandatangan Dokumen</title>
+  <title>SignSenang - Tandatangan Dokumen</title>
   <meta name="description" content="Sahkan dan tandatangan dokumen pendaftaran Cuckoo anda dengan mudah menggunakan telefon pintar.">
   
   <!-- Styling system with cache-busting -->
-  <link rel="stylesheet" href="styles.css?v=2.1">
+  <link rel="stylesheet" href="styles.css?v=2.2">
   
   <!-- FontAwesome Icons for premium UI -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -21,7 +21,7 @@
     <header style="margin-bottom: 1.5rem;">
       <div class="logo-container">
         <div class="logo-icon"><i class="fa-solid fa-pen-nib"></i></div>
-        <h1 class="brand-name">Cuckoo EasySign</h1>
+        <h1 class="brand-name">SignSenang</h1>
       </div>
       <p class="subtitle" style="font-size: 0.95rem;">Tandatangan dokumen anda dengan mudah dan cepat terus dari telefon pintar.</p>
     </header>
@@ -52,13 +52,28 @@
     <!-- Workspace Screen (Hidden during loading) -->
     <div class="glass-panel" id="workspace-panel" style="display: none; padding: 1.5rem;">
       
+      <!-- Top Bar Header for Customer (Desktop & Mobile Unified Layout) -->
+      <div class="customer-header-bar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.06); padding-bottom: 1rem;">
+        <h2 style="font-size: 1.3rem; color: var(--text-primary); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+          <i class="fa-solid fa-pen-nib" style="color: var(--primary);"></i> Tandatangan SignSenang
+        </h2>
+        <div class="customer-actions" style="display: flex; gap: 0.75rem; align-items: center;">
+          <button class="btn btn-primary" id="open-sign-modal-btn" style="padding: 0.55rem 1.1rem; font-size: 0.9rem;">
+            <i class="fa-solid fa-signature"></i> Tulis Tandatangan
+          </button>
+          <button class="btn btn-success" id="download-signed-pdf-btn" style="display: none; padding: 0.55rem 1.1rem; font-size: 0.9rem;">
+            <i class="fa-solid fa-file-circle-check"></i> Sahkan & Muat Turun PDF
+          </button>
+        </div>
+      </div>
+
       <!-- Instructional Note -->
       <div class="instruction-card" style="margin-bottom: 1rem; padding: 0.8rem 1rem;">
         <div class="instruction-icon" style="font-size: 1.2rem;">
           <i class="fa-solid fa-circle-info"></i>
         </div>
         <div class="instruction-text" style="font-size: 0.85rem;" id="step-instruction">
-          Langkah 1: Klik butang <strong>"Tulis Tandatangan"</strong> di bawah untuk melukis tandatangan anda.
+          Langkah 1: Klik butang <strong>"Tulis Tandatangan"</strong> di atas untuk melukis tandatangan anda.
         </div>
       </div>
 
@@ -93,21 +108,12 @@
               <i class="fa-solid fa-magnifying-glass-plus"></i>
             </button>
           </div>
-          
-          <!-- Large floating draw prompt -->
-          <div class="tap-to-sign-prompt" id="open-sign-modal-btn">
-            <i class="fa-solid fa-signature"></i> Tulis Tandatangan
-          </div>
         </div>
 
       </div>
 
-      <!-- Action Footer Buttons -->
-      <div style="text-align: center; display: flex; flex-direction: column; gap: 1rem; align-items: center; margin-top: 1.5rem;">
-        <!-- Download Final Doc Button (Visible only after signature placed) -->
-        <button class="btn btn-success" id="download-signed-pdf-btn" style="width: 100%; max-width: 450px; display: none; font-size: 1.1rem; padding: 1rem 2rem;">
-          <i class="fa-solid fa-file-circle-check" style="font-size: 1.3rem;"></i> Sahkan & Muat Turun PDF
-        </button>
+      <!-- Action Footer Note -->
+      <div id="desktop-note-container" style="text-align: center; margin-top: 1rem; border-top: 1px solid rgba(0,0,0,0.06); padding-top: 1rem;">
         <p class="subtitle" style="font-size: 0.8rem;">*Nota: Pastikan anda meletakkan tandatangan di tempat yang betul sebelum menekan butang Sahkan.</p>
       </div>
 
@@ -119,21 +125,35 @@
         <i class="fa-solid fa-check"></i>
       </div>
       <h2 style="margin-bottom: 1rem; color: var(--success);">Tandatangan Selesai!</h2>
-      <p class="subtitle" style="font-size: 1.05rem; max-width: 500px; margin: 0 auto 2.5rem;">
+      <p class="subtitle" style="font-size: 1.05rem; max-width: 500px; margin: 0 auto 2rem;">
         Borang pendaftaran Cuckoo anda yang lengkap ditandatangani telah berjaya disimpan ke dalam peranti anda.
       </p>
       
+      <!-- New Link Box container similar to index.html -->
+      <div class="link-box-container" id="signed-link-container" style="display: none; margin: 0 auto 2rem; max-width: 550px; text-align: left; background: rgba(16, 185, 129, 0.04); border-color: rgba(16, 185, 129, 0.25);">
+        <i class="fa-solid fa-link" style="color: var(--success); font-size: 1.2rem;"></i>
+        <a class="link-url-text" id="signed-pdf-link" href="#" target="_blank" style="color: var(--success);" title="Klik untuk buka dokumen PDF ditandatangan">Memuatkan pautan...</a>
+        <button class="btn btn-success copy-btn" id="copy-signed-link-btn" style="padding: 0.6rem 1.2rem; font-size: 0.9rem;">
+          <i class="fa-solid fa-copy"></i> Copy Link
+        </button>
+      </div>
+
       <div class="instruction-card" style="margin: 0 auto 2.5rem; max-width: 550px; text-align: left;">
         <div class="instruction-icon" style="color: var(--success); font-size: 1.5rem;">
           <i class="fa-solid fa-share-nodes"></i>
         </div>
-        <div class="instruction-text" style="color: var(--text-primary);">
+        <div class="instruction-text" style="color: var(--text-primary);" id="success-instruction-text">
           <strong>Langkah Seterusnya:</strong> Sila buka aplikasi <strong>WhatsApp</strong> anda dan hantar semula fail PDF yang baru dimuat turun ini kepada ejen Cuckoo anda untuk melengkapkan proses pendaftaran. Terima kasih!
         </div>
       </div>
       
-      <p class="subtitle" style="font-size: 0.8rem; color: var(--text-muted);">Cuckoo EasySign - 100% Percuma & Mudah</p>
     </div>
+
+    <!-- Bottom Footer Info -->
+    <footer style="margin-top: 3rem;">
+      <p>SignSenang - Sistem Penandatangan PDF Mudah Alih Percuma.</p>
+      <p style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-muted); font-weight: bold;">Dihasilkan oleh <strong>SyafixSimetry</strong></p>
+    </footer>
 
   </div>
 

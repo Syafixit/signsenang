@@ -1,5 +1,5 @@
 /* 
-  Cuckoo EasySign - Customer Signature Portal Controller (Advanced Zoom & Position)
+  SignSenang - Customer Signature Portal Controller (Advanced Zoom & Position)
   Manages file download, sessionStorage local retrieval, viewport rendering, 
   highly resilient percentage-based signature dragging/resizing, and PDF-Lib stitching.
 */
@@ -375,7 +375,37 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
       }
 
-      signatureData = signaturePad.toDataURL("image/png");
+      // Get the raw signature canvas
+      const rawCanvas = sigCanvas;
+      
+      // Guarantee 100% transparency by creating a temporary canvas and removing any white/near-white backgrounds
+      const tempCanvas = document.createElement("canvas");
+      tempCanvas.width = rawCanvas.width;
+      tempCanvas.height = rawCanvas.height;
+      const tempCtx = tempCanvas.getContext("2d");
+      
+      // Draw original canvas content onto temporary canvas
+      tempCtx.drawImage(rawCanvas, 0, 0);
+      
+      // Process pixels to remove light gray or white background
+      try {
+        const imgData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+        const data = imgData.data;
+        for (let i = 0; i < data.length; i += 4) {
+          const r = data[i];
+          const g = data[i+1];
+          const b = data[i+2];
+          // If a pixel is pure white or very close to it (RGB all above 240), make it transparent
+          if (r > 240 && g > 240 && b > 240) {
+            data[i+3] = 0; // set alpha channel to 0
+          }
+        }
+        tempCtx.putImageData(imgData, 0, 0);
+        signatureData = tempCanvas.toDataURL("image/png");
+      } catch (err) {
+        console.warn("Ralat penapisan pixel transparansi, guna kaedah laluan terus:", err);
+        signatureData = signaturePad.toDataURL("image/png");
+      }
       
       // Calculate centered percentages relative to current canvas
       const w = 150;
@@ -661,7 +691,60 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       const finalizedBytes = await pdfDoc.save();
 
-      triggerFileDownload(finalizedBytes, "cuckoo-pendaftaran-signed.pdf");
+      // 1. Trigger local download first so they immediately get the file offline
+      triggerFileDownload(finalizedBytes, "signsenang-dokumen-signed.pdf");
+
+      // 2. Change button text and upload to cloud for agent link generation
+      downloadSignedPdfBtn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up fa-spin"></i> Menyediakan Pautan Ejen...`;
+      
+      let signedFileUrl = "";
+      try {
+        signedFileUrl = await uploadToCloud(finalizedBytes, "signsenang-dokumen-signed.pdf");
+      } catch (uploadErr) {
+        console.warn("Gagal muat naik ke awan, namun fail lokal telah dimuat turun:", uploadErr);
+      }
+
+      // 3. Setup the link sharing elements on the success panel
+      const signedLinkContainer = document.getElementById("signed-link-container");
+      const signedPdfLink = document.getElementById("signed-pdf-link");
+      const copySignedLinkBtn = document.getElementById("copy-signed-link-btn");
+      const successInstructionText = document.getElementById("success-instruction-text");
+
+      if (signedFileUrl) {
+        if (signedPdfLink) {
+          signedPdfLink.href = signedFileUrl;
+          signedPdfLink.textContent = signedFileUrl;
+        }
+        if (signedLinkContainer) {
+          signedLinkContainer.style.display = "flex";
+        }
+        if (successInstructionText) {
+          successInstructionText.innerHTML = `<strong>Langkah Seterusnya:</strong> Sila <strong>Salin Pautan (Copy Link)</strong> di atas dan hantar terus kepada ejen Cuckoo anda, atau hantar fail PDF yang dimuat turun tadi melalui WhatsApp. Terima kasih!`;
+        }
+
+        // Setup Tactile Copy Button Action
+        if (copySignedLinkBtn) {
+          copySignedLinkBtn.onclick = (e) => {
+            e.preventDefault();
+            navigator.clipboard.writeText(signedFileUrl).then(() => {
+              copySignedLinkBtn.innerHTML = `<i class="fa-solid fa-check"></i> Disalin!`;
+              copySignedLinkBtn.style.background = "#059669";
+              setTimeout(() => {
+                copySignedLinkBtn.innerHTML = `<i class="fa-solid fa-copy"></i> Copy Link`;
+                copySignedLinkBtn.style.background = "";
+              }, 2000);
+            }).catch(err => {
+              console.error("Gagal menyalin link:", err);
+              alert("Sila salin pautan ini secara manual:\n" + signedFileUrl);
+            });
+          };
+        }
+      } else {
+        // If upload failed, hide container
+        if (signedLinkContainer) {
+          signedLinkContainer.style.display = "none";
+        }
+      }
 
       workspacePanel.style.display = "none";
       successPanel.style.display = "block";
