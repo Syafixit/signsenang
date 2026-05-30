@@ -1,6 +1,6 @@
 /* 
   SignSenang - Premium Red & White Corporate Style System
-  Designed with Cuckoo's iconic crimson red and crisp white layout, featuring clean card panels, soft shadows, and smooth micro-animations.
+  Designed with a premium crimson red and crisp white layout, featuring clean card panels, soft shadows, and smooth micro-animations.
 */
 
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
@@ -15,7 +15,7 @@
   --panel-border: rgba(220, 38, 38, 0.1);
   --panel-border-hover: rgba(220, 38, 38, 0.25);
   
-  --primary: #dc2626; /* Cuckoo Brand Red */
+  --primary: #dc2626; /* Crimson Brand Red */
   --primary-glow: rgba(220, 38, 38, 0.25);
   --accent: #ef4444;
   --accent-glow: rgba(239, 68, 68, 0.2);
@@ -1265,7 +1265,7 @@ footer a:hover {
     display: none !important; /* Hide divider line in mobile toolbox */
   }
 
-  /* Row 1: The major action buttons styled as secondary gray by default, Cuckoo Red when active */
+  /* Row 1: The major action buttons styled as secondary gray by default, Brand Red when active */
   body.editor-active .toolbox-btn {
     flex: 1 1 45% !important;
     height: 38px !important;

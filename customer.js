@@ -178,15 +178,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     } else {
       // Direct open without arguments - show manual upload prompt immediately instead of error
-      loadingStatus.textContent = "Sila muat naik fail PDF Cuckoo untuk mula menandatangani.";
+      loadingStatus.textContent = "Sila muat naik fail PDF untuk mula menandatangani.";
       const spinner = loadingPanel.querySelector(".spinner");
       if (spinner) spinner.style.display = "none";
       
       const statusText = document.getElementById("loading-status");
-      if (statusText) statusText.textContent = "Sila klik butang di bawah untuk memilih fail PDF yang telah diisi oleh ejen.";
+      if (statusText) statusText.textContent = "Sila klik butang di bawah untuk memilih fail PDF.";
       
       const mainHeader = loadingPanel.querySelector("h2");
-      if (mainHeader) mainHeader.textContent = "Muat Naik Fail PDF Cuckoo";
+      if (mainHeader) mainHeader.textContent = "Muat Naik Fail PDF";
     }
 
   } catch (error) {
@@ -719,7 +719,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           signedLinkContainer.style.display = "flex";
         }
         if (successInstructionText) {
-          successInstructionText.innerHTML = `<strong>Langkah Seterusnya:</strong> Sila <strong>Salin Pautan (Copy Link)</strong> di atas dan hantar terus kepada ejen Cuckoo anda, atau hantar fail PDF yang dimuat turun tadi melalui WhatsApp. Terima kasih!`;
+          successInstructionText.innerHTML = `<strong>Langkah Seterusnya:</strong> Sila <strong>Salin Pautan (Copy Link)</strong> di atas dan hantar terus kepada pihak berkaitan, atau hantar fail PDF yang dimuat turun tadi melalui WhatsApp. Terima kasih!`;
         }
 
         // Setup Tactile Copy Button Action

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>SignSenang - Isi Borang & Tandatangan PDF</title>
-  <meta name="description" content="Sistem penandatangan dokumen PDF percuma, cepat, dan tanpa pendaftaran untuk ejen Cuckoo memudahkan proses pendaftaran produk customer.">
+  <meta name="description" content="Sistem penandatangan dokumen PDF percuma, cepat, dan tanpa pendaftaran memudahkan proses mengisi borang dan meletakkan tandatangan digital pelanggan secara offline dan online.">
   
   <!-- Styling system with cache-busting -->
   <link rel="stylesheet" href="styles.css?v=2.1">
@@ -38,7 +38,7 @@
               <i class="fa-solid fa-bolt" style="color: var(--primary);"></i>
             </div>
             <div class="instruction-text">
-              <strong>Isi Borang & Sign:</strong> Muat naik dokumen PDF pendaftaran dari Cuckoo. Ejen boleh masukkan <strong>Nama, No IC, dan tanda Tick</strong> terus pada borang sebelum link tandatangan dihantar kepada customer!
+              <strong>Isi Borang & Sign:</strong> Muat naik dokumen PDF anda. Masukkan <strong>Teks dan tanda Tick</strong> terus pada borang sebelum link tandatangan dihantar kepada pelanggan!
             </div>
           </div>
 
@@ -48,7 +48,7 @@
             <div class="dropzone-icon">
               <i class="fa-solid fa-file-pdf" style="color: var(--primary);"></i>
             </div>
-            <h3 class="dropzone-title">Pilih Dokumen PDF Cuckoo</h3>
+            <h3 class="dropzone-title">Pilih Dokumen PDF</h3>
             <p class="dropzone-text">Seret & letak fail PDF di sini, atau klik untuk memilih fail</p>
             <button class="btn btn-primary" id="select-btn">
               <i class="fa-solid fa-cloud-arrow-up"></i> Muat Naik Fail
@@ -59,8 +59,8 @@
         <!-- PDF Interactive Editor Workspace (Shown after upload) -->
         <div id="editor-section" style="display: none; animation: fadeInUp 0.6s ease;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-            <h2 style="font-size: 1.4rem;"><i class="fa-solid fa-sliders" style="color: var(--primary);"></i> Editor Borang Cuckoo</h2>
-            <span class="badge-editor" id="editor-file-name">cuckoo_form.pdf</span>
+            <h2 style="font-size: 1.4rem;"><i class="fa-solid fa-sliders" style="color: var(--primary);"></i> Editor Borang PDF</h2>
+            <span class="badge-editor" id="editor-file-name">dokumen_form.pdf</span>
           </div>
 
           <!-- Floating Toolbox -->
@@ -206,7 +206,7 @@
     <!-- Bottom Footer Info -->
     <footer>
       <p>SignSenang - Sistem Penandatangan PDF Mudah Alih Percuma.</p>
-      <p style="margin-top: 0.5rem; font-size: 0.8rem;">Disediakan khas untuk pendaftaran produk Cuckoo. Mudah, cepat dan percuma.</p>
+      <p style="margin-top: 0.5rem; font-size: 0.8rem;">Mudah, cepat, selamat dan 100% percuma.</p>
       <p style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-muted); font-weight: bold;">Dihasilkan oleh <strong>SyafixSimetry</strong></p>
     </footer>
   </div>

@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const actionSignLocalBtn = document.getElementById("action-sign-local-btn");
   const resetBtn = document.getElementById("reset-btn");
 
-  let activeFileName = "cuckoo_form.pdf";
+  let activeFileName = "dokumen_form.pdf";
   let generatedShareLink = "";
 
   // --- Drag and Drop Handlers ---
@@ -1031,14 +1031,14 @@ document.addEventListener("DOMContentLoaded", () => {
         value: shareLink,
         size: 130,
         background: "white",
-        foreground: "#dc2626", // Cuckoo brand red for QR
+        foreground: "#dc2626", // Brand red for QR
         level: "M"
       });
     } catch (qrError) {
       console.error("QR Code rendering failed:", qrError);
     }
 
-    const textMsg = `Salam sejahtera! Sila klik link di bawah untuk menandatangani dokumen pendaftaran Cuckoo anda secara digital. \n\nSemua maklumat pendaftaran Nama, IC, dan Pilihan Produk telah kami lengkapkan. Anda hanya perlu sign terus pada handphone sahaja: \n\n👉 ${shareLink}`;
+    const textMsg = `Salam sejahtera! Sila klik link di bawah untuk menandatangani dokumen anda secara digital. \n\nBorang telah siap diisi. Anda hanya perlu tandatangan terus pada handphone sahaja: \n\n👉 ${shareLink}`;
     whatsappShareBtn.onclick = () => {
       const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(textMsg)}`;
       window.open(waUrl, "_blank");
